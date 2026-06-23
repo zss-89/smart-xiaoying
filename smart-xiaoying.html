@@ -193,7 +193,7 @@ body{font-family:"AlibabaPuHuiTi","PingFang SC","Hiragino Sans GB","Microsoft Ya
 .file-bbl .file-name{font-size:12px;color:var(--text-primary);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
 .file-bbl .file-size{font-size:10px;color:var(--text-tertiary);padding:0 12px 8px}
 .img-bbl{position:relative;border-radius:12px;overflow:hidden;max-width:200px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
-.img-bbl img{width:100%;display:block;border-radius:12px}
+.img-bbl img{width:100%;display:block;border-radius:12px;max-height:150px;object-fit:cover;object-position:top}
 .privacy-badge{position:absolute;top:8px;right:8px;display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;background:#6B5CE7;color:#fff;font-size:11px;font-weight:500;cursor:pointer;z-index:2;box-shadow:0 2px 6px rgba(107,92,231,.35);transition:all .2s}
 .privacy-badge:active{transform:scale(.95);background:#5A4BD6}
 .privacy-badge svg{width:14px;height:14px;flex-shrink:0}
@@ -786,7 +786,7 @@ function bIco(c){
 }
 
 // ===== State =====
-let page="home",detId=null,detTab="info",vidCount=6,msgs=[{r:"a",c:"你好，我是英仕无忧!\n\n我是你的专属健康险智核助手，可以帮你\n√快速完成在线智能核保\n√解答承保条件与保障范围疑问\n√指导健康告知如何如实填写\n\n告诉我你的情况，我来帮你找到最合适的方案\n\n（内容由AI生成，仅供参考，不构成专业医疗或法律建议）",t:ts()},{r:"u",c:"这是我的体检报告，帮我分析一下",t:ts()},{r:"img",img:"images/v5.png",t:ts()},{r:"a",c:"已收到您的体检报告图片，正在进行智能识别...\n\n【识别结果】\n• 血常规：白细胞计数偏高（11.2×10⁹/L）\n• 甲状腺功能：TSH正常，FT3/FT4正常\n• 肝功能：ALT轻度升高（52 U/L）\n• 血糖：空腹血糖 5.8 mmol/L（正常范围）\n\n【初步建议】\n1. 白细胞偏高建议结合近期是否有感染症状\n2. ALT轻度升高需关注，建议复查\n3. 整体指标在可承保范围内\n\n如需进一步核保评估，请补充既往病史信息。",t:ts()}],inp="",aSearch="",uSearch="",uFilter="全部";
+let page="home",detId=null,detTab="info",vidCount=6,msgs=[{r:"a",c:"你好，我是英仕无忧!\n\n我是你的专属健康险智核助手，可以帮你\n√快速完成在线智能核保\n√解答承保条件与保障范围疑问\n√指导健康告知如何如实填写\n\n告诉我你的情况，我来帮你找到最合适的方案\n\n（内容由AI生成，仅供参考，不构成专业医疗或法律建议）",t:ts()},{r:"u",c:"这是我的体检报告，帮我分析一下",t:ts()},{r:"img",img:"images/checkup-report.png",t:ts()},{r:"a",c:"已收到您的体检报告图片，正在进行智能识别...\n\n【识别结果】\n• 血常规：白细胞计数偏高（11.2×10⁹/L）\n• 甲状腺功能：TSH正常，FT3/FT4正常\n• 肝功能：ALT轻度升高（52 U/L）\n• 血糖：空腹血糖 5.8 mmol/L（正常范围）\n\n【初步建议】\n1. 白细胞偏高建议结合近期是否有感染症状\n2. ALT轻度升高需关注，建议复查\n3. 整体指标在可承保范围内\n\n如需进一步核保评估，请补充既往病史信息。",t:ts()}],inp="",aSearch="",uSearch="",uFilter="全部";
 let isAuthorized=false,isProfileSetup=false;
 let selectedProduct="平安人生免健告版";
 let aiLoading=false,aiResult=null,aiPatient=null;
