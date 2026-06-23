@@ -803,7 +803,7 @@ function bIco(c){
 let page="home",detId=null,detTab="info",vidCount=6,msgs=[{r:"a",c:"你好，我是英仕无忧!\n\n我是你的专属健康险智核助手，可以帮你\n√快速完成在线智能核保\n√解答承保条件与保障范围疑问\n√指导健康告知如何如实填写\n\n告诉我你的情况，我来帮你找到最合适的方案\n\n（内容由AI生成，仅供参考，不构成专业医疗或法律建议）",t:ts()},{r:"u",c:"这是我的体检报告，帮我分析一下",t:ts()},{r:"img",img:"images/checkup-report.png",t:ts()},{r:"a",c:"已收到您的体检报告图片，正在进行智能识别...\n\n【识别结果】\n• 血常规：白细胞计数偏高（11.2×10⁹/L）\n• 甲状腺功能：TSH正常，FT3/FT4正常\n• 肝功能：ALT轻度升高（52 U/L）\n• 血糖：空腹血糖 5.8 mmol/L（正常范围）\n\n【初步建议】\n1. 白细胞偏高建议结合近期是否有感染症状\n2. ALT轻度升高需关注，建议复查\n3. 整体指标在可承保范围内\n\n如需进一步核保评估，请补充既往病史信息。",t:ts()}],inp="",aSearch="",uSearch="",uFilter="全部";
 let isAuthorized=false,isProfileSetup=false;
 let selectedProduct="平安人生免健告版";
-let aiLoading=false,aiResult=null,aiPatient=null;
+let aiLoading=false,aiResult=null,aiPatient=null;let awaitingNickname=false;
 let walletBalance=3680.50,walletAction="",walletTxns=[
   {type:"in",amt:2000,note:"充值",time:"2026-06-20 14:30"},
   {type:"in",amt:1000,note:"充值",time:"2026-06-15 10:00"},
@@ -998,7 +998,7 @@ function bChat(){
   document.querySelectorAll(".ai-dislike").forEach(btn=>btn.addEventListener("click",function(){const idx=+this.dataset.idx;this.classList.toggle("dislike-active");const sib=this.parentElement.querySelector(".ai-like");if(this.classList.contains("dislike-active")&&sib)sib.classList.remove("active")}));
   document.querySelectorAll(".ai-copy").forEach(btn=>btn.addEventListener("click",function(){const idx=+this.dataset.idx;const txt=msgs[idx]?.c||"";if(navigator.clipboard){navigator.clipboard.writeText(txt).then(()=>{this.classList.add("active");setTimeout(()=>this.classList.remove("active"),1200)})}else{const ta=document.createElement("textarea");ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();this.classList.add("active");setTimeout(()=>this.classList.remove("active"),1200)}}));
   document.querySelectorAll(".ai-regen").forEach(btn=>btn.addEventListener("click",function(){const idx=+this.dataset.idx;let lastUser="";for(let i=idx-1;i>=0;i--){if(msgs[i].r==="u"){lastUser=msgs[i].c;break}}if(!lastUser)return;msgs.splice(idx,1);render();const sc=document.getElementById("cScroll");const tip=document.createElement("div");tip.className="typing";tip.innerHTML=`<div class="m-av">${IC.bot}</div><div class="bbl"><span></span><span></span><span></span></div>`;sc.appendChild(tip);sc.scrollTop=sc.scrollHeight;setTimeout(()=>{msgs.push({r:"a",c:aiR(lastUser),t:ts()});render()},1500)}));
-  document.querySelectorAll(".ai-prompt").forEach(el=>el.addEventListener("click",function(){const type=this.dataset.prompt;const text=type==="more"?"请提供更多详细的分析资料":"好的，帮我生成用户档案";msgs.push({r:"u",c:text,t:ts()});render();const sc=document.getElementById("cScroll");const tip=document.createElement("div");tip.className="typing";tip.innerHTML=`<div class="m-av">${IC.bot}</div><div class="bbl"><span></span><span></span><span></span></div>`;sc.appendChild(tip);sc.scrollTop=sc.scrollHeight;setTimeout(()=>{msgs.push({r:"a",c:type==="more"?"好的，以下是更详细的分析资料：\n\n【详细指标分析】\n• 白细胞（WBC）：11.2×10⁹/L，偏高，常见于细菌感染、应激反应\n• 丙氨酸转氨酶（ALT）：52 U/L，轻度升高，建议2周后复查\n• 空腹血糖：5.8 mmol/L，处于正常高值区间\n\n【风险评估】\n根据以上指标，初步评估为「加费承保」可能性较大。\n\n建议补充：近3个月完整体检报告、既往用药记录、家族病史信息。":"已为您生成用户健康档案：\n\n【基本信息】\n• 档案编号：HS-20260623-001\n• 创建时间：2026-06-23\n\n【健康摘要】\n• 血常规：白细胞偏高，需关注\n• 肝功能：ALT轻度升高\n• 血糖：正常范围\n• 甲状腺：各项指标正常\n\n档案已保存至「档案管理」，可随时查看和补充完善。",t:ts()});render()},1500)}));
+  document.querySelectorAll(".ai-prompt").forEach(el=>el.addEventListener("click",function(){const type=this.dataset.prompt;const text=type==="more"?"请提供更多详细的分析资料":"好的，帮我生成用户健康档案";msgs.push({r:"u",c:text,t:ts()});render();const sc=document.getElementById("cScroll");const tip=document.createElement("div");tip.className="typing";tip.innerHTML=`<div class="m-av">${IC.bot}</div><div class="bbl"><span></span><span></span><span></span></div>`;sc.appendChild(tip);sc.scrollTop=sc.scrollHeight;if(type==="profile"){awaitingNickname=true}setTimeout(()=>{msgs.push({r:"a",c:type==="more"?"好的，以下是更详细的分析资料：\n\n【详细指标分析】\n• 白细胞（WBC）：11.2×10⁹/L，偏高，常见于细菌感染、应激反应\n• 丙氨酸转氨酶（ALT）：52 U/L，轻度升高，建议2周后复查\n• 空腹血糖：5.8 mmol/L，处于正常高值区间\n\n【风险评估】\n根据以上指标，初步评估为「加费承保」可能性较大。\n\n建议补充：近3个月完整体检报告、既往用药记录、家族病史信息。":"请帮您的用户起一个昵称",t:ts()});render()},1500)}));
   const sc=document.getElementById("cScroll");if(sc)sc.scrollTop=sc.scrollHeight;
   const fu=document.getElementById("fileUp");
   if(fu)fu.addEventListener("change",e=>{
@@ -1012,7 +1012,18 @@ function bChat(){
     setTimeout(()=>{msgs.push({r:"a",c:"已收到您上传的文件「"+f.name+"」。\n\n我正在对文件内容进行智能分析，以下是初步结果：\n\n【文件识别】\n已成功读取文件内容，包含医学检查相关数据。\n\n【分析建议】\n1. 检验指标已提取，部分指标存在异常标记\n2. 建议结合临床症状综合判断\n3. 如需核保评估，请补充患者基本信息\n\n您可以继续描述相关问题，我会结合上传的文件为您做进一步分析。",t:ts()});render()},2000);
   });
 }
-function doSend(){if(!inp.trim())return;msgs.push({r:"u",c:inp.trim(),t:ts()});inp="";render();const sc=document.getElementById("cScroll");const tip=document.createElement("div");tip.className="typing";tip.id="tipEl";tip.innerHTML=`<div class="m-av">${IC.bot}</div><div class="bbl"><span></span><span></span><span></span></div>`;sc.appendChild(tip);sc.scrollTop=sc.scrollHeight;const last=msgs[msgs.length-1].c;setTimeout(()=>{msgs.push({r:"a",c:aiR(last),t:ts()});render()},1500)}
+function doSend(){if(!inp.trim())return;const sendText=inp.trim();inp="";if(awaitingNickname){awaitingNickname=false;msgs.push({r:"u",c:sendText,t:ts()});render();const sc=document.getElementById("cScroll");const tip=document.createElement("div");tip.className="typing";tip.innerHTML=`<div class="m-av">${IC.bot}</div><div class="bbl"><span></span><span></span><span></span></div>`;sc.appendChild(tip);sc.scrollTop=sc.scrollHeight;setTimeout(()=>{const now=new Date();const ts2=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0")+" "+String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");const newId=DATA.length+1;DATA.push({id:newId,name:sendText,age:30,gender:"女",phone:"",createdAt:ts2,pre:"白细胞偏高、ALT轻度升高、空腹血糖正常高值",cond:"体检报告示：白细胞计数偏高（11.2×10⁹/L），常见于近期感染或应激反应；丙氨酸转氨酶轻度升高（52 U/L），建议2周后复查肝功能；空腹血糖5.8 mmol/L，处于正常高值区间；甲状腺功能各项指标正常。建议结合临床症状进一步评估。",imgs:{},recs:[]});msgs.push({r:"a",c:"好的，已为用户「"+sendText+"」创建健康档案：
+
+【档案编号】DA-"+String(newId).padStart(6,"0")+"
+【创建时间】"+ts2+"
+
+【健康摘要】
+• 血常规：白细胞偏高，需关注
+• 肝功能：ALT轻度升高
+• 血糖：正常范围
+• 甲状腺：各项指标正常
+
+档案已保存至「档案管理」，可随时查看和补充完善。",t:ts()});render()},1500);return}msgs.push({r:"u",c:sendText,t:ts()});render();const sc=document.getElementById("cScroll");const tip=document.createElement("div");tip.className="typing";tip.id="tipEl";tip.innerHTML=`<div class="m-av">${IC.bot}</div><div class="bbl"><span></span><span></span><span></span></div>`;sc.appendChild(tip);sc.scrollTop=sc.scrollHeight;const last=msgs[msgs.length-1].c;setTimeout(()=>{msgs.push({r:"a",c:aiR(last),t:ts()});render()},1500)}
 
 // -- Archives --
 function rArchives(){
