@@ -1012,18 +1012,7 @@ function bChat(){
     setTimeout(()=>{msgs.push({r:"a",c:"已收到您上传的文件「"+f.name+"」。\n\n我正在对文件内容进行智能分析，以下是初步结果：\n\n【文件识别】\n已成功读取文件内容，包含医学检查相关数据。\n\n【分析建议】\n1. 检验指标已提取，部分指标存在异常标记\n2. 建议结合临床症状综合判断\n3. 如需核保评估，请补充患者基本信息\n\n您可以继续描述相关问题，我会结合上传的文件为您做进一步分析。",t:ts()});render()},2000);
   });
 }
-function doSend(){if(!inp.trim())return;const sendText=inp.trim();inp="";if(awaitingNickname){awaitingNickname=false;msgs.push({r:"u",c:sendText,t:ts()});render();const sc=document.getElementById("cScroll");const tip=document.createElement("div");tip.className="typing";tip.innerHTML=`<div class="m-av">${IC.bot}</div><div class="bbl"><span></span><span></span><span></span></div>`;sc.appendChild(tip);sc.scrollTop=sc.scrollHeight;setTimeout(()=>{const now=new Date();const ts2=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0")+" "+String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");const newId=DATA.length+1;DATA.push({id:newId,name:sendText,age:30,gender:"女",phone:"",createdAt:ts2,pre:"白细胞偏高、ALT轻度升高、空腹血糖正常高值",cond:"体检报告示：白细胞计数偏高（11.2×10⁹/L），常见于近期感染或应激反应；丙氨酸转氨酶轻度升高（52 U/L），建议2周后复查肝功能；空腹血糖5.8 mmol/L，处于正常高值区间；甲状腺功能各项指标正常。建议结合临床症状进一步评估。",imgs:{},recs:[]});msgs.push({r:"a",c:"好的，已为用户「"+sendText+"」创建健康档案：
-
-【档案编号】DA-"+String(newId).padStart(6,"0")+"
-【创建时间】"+ts2+"
-
-【健康摘要】
-• 血常规：白细胞偏高，需关注
-• 肝功能：ALT轻度升高
-• 血糖：正常范围
-• 甲状腺：各项指标正常
-
-档案已保存至「档案管理」，可随时查看和补充完善。",t:ts()});render()},1500);return}msgs.push({r:"u",c:sendText,t:ts()});render();const sc=document.getElementById("cScroll");const tip=document.createElement("div");tip.className="typing";tip.id="tipEl";tip.innerHTML=`<div class="m-av">${IC.bot}</div><div class="bbl"><span></span><span></span><span></span></div>`;sc.appendChild(tip);sc.scrollTop=sc.scrollHeight;const last=msgs[msgs.length-1].c;setTimeout(()=>{msgs.push({r:"a",c:aiR(last),t:ts()});render()},1500)}
+function doSend(){if(!inp.trim())return;const sendText=inp.trim();inp="";if(awaitingNickname){awaitingNickname=false;msgs.push({r:"u",c:sendText,t:ts()});render();const sc=document.getElementById("cScroll");const tip=document.createElement("div");tip.className="typing";tip.innerHTML=`<div class="m-av">${IC.bot}</div><div class="bbl"><span></span><span></span><span></span></div>`;sc.appendChild(tip);sc.scrollTop=sc.scrollHeight;setTimeout(()=>{const now=new Date();const ts2=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0")+" "+String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");const newId=DATA.length+1;DATA.push({id:newId,name:sendText,age:30,gender:"女",phone:"",createdAt:ts2,pre:"白细胞偏高、ALT轻度升高、空腹血糖正常高值",cond:"体检报告示：白细胞计数偏高（11.2×10⁹/L），常见于近期感染或应激反应；丙氨酸转氨酶轻度升高（52 U/L），建议2周后复查肝功能；空腹血糖5.8 mmol/L，处于正常高值区间；甲状腺功能各项指标正常。建议结合临床症状进一步评估。",imgs:{},recs:[]});msgs.push({r:"a",c:"好的，已为用户「"+sendText+"」创建健康档案：\n\n【档案编号】DA-"+String(newId).padStart(6,"0")+"\n【创建时间】"+ts2+"\n\n【健康摘要】\n• 血常规：白细胞偏高，需关注\n• 肝功能：ALT轻度升高\n• 血糖：正常范围\n• 甲状腺：各项指标正常\n\n档案已保存至「档案管理」，可随时查看和补充完善。",t:ts()});render()},1500);return}msgs.push({r:"u",c:sendText,t:ts()});render();const sc=document.getElementById("cScroll");const tip=document.createElement("div");tip.className="typing";tip.id="tipEl";tip.innerHTML=`<div class="m-av">${IC.bot}</div><div class="bbl"><span></span><span></span><span></span></div>`;sc.appendChild(tip);sc.scrollTop=sc.scrollHeight;const last=msgs[msgs.length-1].c;setTimeout(()=>{msgs.push({r:"a",c:aiR(last),t:ts()});render()},1500)}
 
 // -- Archives --
 function rArchives(){
