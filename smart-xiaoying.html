@@ -145,6 +145,16 @@ body{font-family:"AlibabaPuHuiTi","PingFang SC","Hiragino Sans GB","Microsoft Ya
 .msg.assistant .bbl{background:var(--white);color:var(--text-primary);border-radius:2px 12px 12px 12px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 .msg.user .bbl{background:var(--green);color:#fff;border-radius:12px 2px 12px 12px}
 .msg .ts{font-size:10px;color:var(--text-tertiary);margin-top:4px;text-align:right}
+.ai-toolbar{margin-top:8px;display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.ai-disclaimer{font-size:10px;color:#bbb;letter-spacing:.3px}
+.ai-actions{display:flex;gap:6px}
+.ai-actions button{width:32px;height:32px;border-radius:8px;border:none;background:#f5f5f5;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;padding:0}
+.ai-actions button:active{transform:scale(.9)}
+.ai-actions button svg{width:16px;height:16px;color:#666;stroke:#666}
+.ai-actions button.active{background:#E8F5E9}
+.ai-actions button.active svg{color:var(--green);stroke:var(--green)}
+.ai-actions button.dislike-active{background:#FFF0F0}
+.ai-actions button.dislike-active svg{color:#FF4D4F;stroke:#FF4D4F}
 
 .typing{display:flex;gap:8px;max-width:85%}
 .typing .m-av{width:32px;height:32px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center}
@@ -950,8 +960,8 @@ function bHome(){
 
 // -- Chat --
 function rChat(){
-  const ms=msgs.map(m=>{
-    if(m.r==="a")return`<div class="msg assistant slide-up"><div class="m-av">${IC.bot}</div><div style="flex:1"><div class="bbl">${eh(m.c)}</div><div class="ts">${m.t}</div></div></div>`;
+  const ms=msgs.map((m,mIdx)=>{
+    if(m.r==="a")return`<div class="msg assistant slide-up"><div class="m-av">${IC.bot}</div><div style="flex:1"><div class="bbl">${eh(m.c)}</div><div class="ts">${m.t}</div><div class="ai-toolbar"><div class="ai-disclaimer">本回答由AI生成，内容仅供参考，请仔细甄别</div><div class="ai-actions"><button class="ai-like" data-idx="${mIdx}" title="点赞"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg></button><button class="ai-dislike" data-idx="${mIdx}" title="回踩"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/><path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg></button><button class="ai-copy" data-idx="${mIdx}" title="复制"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><button class="ai-regen" data-idx="${mIdx}" title="重新回答"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button></div></div></div></div>`;
     if(m.r==="file"){
       const ext=(m.fname||"").split(".").pop().toLowerCase();
       const isImg=["jpg","jpeg","png","gif","bmp","webp"].includes(ext);
@@ -980,6 +990,10 @@ function bChat(){
   document.querySelectorAll(".quick-card").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".quick-card").forEach(c=>c.classList.remove("selected"));b.classList.add("selected");selectedProduct=b.dataset.n;if(qkValEl)qkValEl.textContent=selectedProduct;trig.classList.remove("open");panel.classList.remove("open");inp=b.dataset.t;inp2.value=inp;sb.disabled=false;inp2.focus()}));
   document.querySelectorAll(".quick-btn").forEach(b=>b.addEventListener("click",()=>{inp=b.dataset.t;inp2.value=inp;sb.disabled=false;inp2.focus()}));
   const pb=document.getElementById("privacyBadge");if(pb)pb.addEventListener("click",(e)=>{e.stopPropagation();showPrivacyModal()});
+  document.querySelectorAll(".ai-like").forEach(btn=>btn.addEventListener("click",function(){const idx=+this.dataset.idx;this.classList.toggle("active");const sib=this.parentElement.querySelector(".ai-dislike");if(this.classList.contains("active")&&sib)sib.classList.remove("dislike-active")}));
+  document.querySelectorAll(".ai-dislike").forEach(btn=>btn.addEventListener("click",function(){const idx=+this.dataset.idx;this.classList.toggle("dislike-active");const sib=this.parentElement.querySelector(".ai-like");if(this.classList.contains("dislike-active")&&sib)sib.classList.remove("active")}));
+  document.querySelectorAll(".ai-copy").forEach(btn=>btn.addEventListener("click",function(){const idx=+this.dataset.idx;const txt=msgs[idx]?.c||"";if(navigator.clipboard){navigator.clipboard.writeText(txt).then(()=>{this.classList.add("active");setTimeout(()=>this.classList.remove("active"),1200)})}else{const ta=document.createElement("textarea");ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();this.classList.add("active");setTimeout(()=>this.classList.remove("active"),1200)}}));
+  document.querySelectorAll(".ai-regen").forEach(btn=>btn.addEventListener("click",function(){const idx=+this.dataset.idx;let lastUser="";for(let i=idx-1;i>=0;i--){if(msgs[i].r==="u"){lastUser=msgs[i].c;break}}if(!lastUser)return;msgs.splice(idx,1);render();const sc=document.getElementById("cScroll");const tip=document.createElement("div");tip.className="typing";tip.innerHTML=`<div class="m-av">${IC.bot}</div><div class="bbl"><span></span><span></span><span></span></div>`;sc.appendChild(tip);sc.scrollTop=sc.scrollHeight;setTimeout(()=>{msgs.push({r:"a",c:aiR(lastUser),t:ts()});render()},1500)}));
   const sc=document.getElementById("cScroll");if(sc)sc.scrollTop=sc.scrollHeight;
   const fu=document.getElementById("fileUp");
   if(fu)fu.addEventListener("change",e=>{
