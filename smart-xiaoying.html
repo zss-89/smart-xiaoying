@@ -117,6 +117,8 @@ body{font-family:"AlibabaPuHuiTi","PingFang SC","Hiragino Sans GB","Microsoft Ya
 .video-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
 .video-play .play-btn{width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
 .video-play .play-btn svg{width:16px;height:16px;color:#fff;margin-left:2px}
+.video-badge{position:absolute;top:6px;right:6px;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;letter-spacing:.5px;z-index:2;background:linear-gradient(135deg,#F5D06E,#D4A23A);color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.2);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.video-badge.free{background:linear-gradient(135deg,#A8D8A8,#5CB85C);text-shadow:0 1px 1px rgba(0,0,0,.15)}
 .video-info{padding:8px 10px}
 .video-info .vt{font-size:12px;font-weight:500;color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .video-info .vd{font-size:10px;color:var(--text-tertiary);margin-top:3px;display:flex;align-items:center;gap:4px}
@@ -671,9 +673,9 @@ body{font-family:"AlibabaPuHuiTi","PingFang SC","Hiragino Sans GB","Microsoft Ya
   <div class="status-bar"><span>9:41</span><div class="notch"></div><span style="display:flex;gap:6px;align-items:center"><span>5G</span><span>100%</span></span></div>
   <div class="content" id="content"></div>
   <div class="tab-bar" id="tabBar">
-    <button class="active" data-page="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>首页</span></button>
-    <button data-page="chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>小英</span></button>
+    <button class="active" data-page="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>课程</span></button>
     <button data-page="archives"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg><span>档案管理</span></button>
+    <button data-page="chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>小英</span></button>
     <button data-page="underwriting"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg><span>核保记录</span></button>
     <button data-page="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>个人中心</span></button>
   </div>
@@ -793,18 +795,18 @@ let userPoints=28560,checkinStreak=3,checkinToday=false;
 let tasksDone={browse:false,chat:false,video:false};
 
 const VIDEOS=[
-  {id:1,title:"什么是健康告知？投保前必看",views:"2.3万",dur:"03:25",img:"images/v1.png"},
-  {id:2,title:"重疾险vs医疗险，区别在哪？",views:"1.8万",dur:"04:12",img:"images/v2.png"},
-  {id:3,title:"带病投保的正确姿势",views:"3.1万",dur:"05:08",img:"images/v3.png"},
-  {id:4,title:"核保结论解读：标体/除外/拒保",views:"1.5万",dur:"03:50",img:"images/v4.png"},
-  {id:5,title:"甲状腺结节还能买保险吗？",views:"4.2万",dur:"04:35",img:"images/v5.png"},
-  {id:6,title:"家庭保险配置方案指南",views:"2.7万",dur:"06:20",img:"images/v6.png"},
-  {id:7,title:"高血压人群的投保策略",views:"1.9万",dur:"04:48",img:"images/v7.png"},
-  {id:8,title:"免健告产品真的靠谱吗？",views:"3.5万",dur:"05:30",img:"images/v8.png"},
-  {id:9,title:"理赔流程全解析",views:"2.1万",dur:"04:15",img:"images/v9.png"},
-  {id:10,title:"乳腺结节投保实操指南",views:"1.6万",dur:"03:55",img:"images/v10.png"},
-  {id:11,title:"乙肝携带者如何买保险",views:"2.8万",dur:"05:42",img:"images/v11.png"},
-  {id:12,title:"2026年热门重疾险横评",views:"3.9万",dur:"07:10",img:"images/v12.png"},
+  {id:1,title:"什么是健康告知？投保前必看",views:"2.3万",dur:"03:25",img:"images/v1.png",free:true},
+  {id:2,title:"重疾险vs医疗险，区别在哪？",views:"1.8万",dur:"04:12",img:"images/v2.png",free:false},
+  {id:3,title:"带病投保的正确姿势",views:"3.1万",dur:"05:08",img:"images/v3.png",free:true},
+  {id:4,title:"核保结论解读：标体/除外/拒保",views:"1.5万",dur:"03:50",img:"images/v4.png",free:false},
+  {id:5,title:"甲状腺结节还能买保险吗？",views:"4.2万",dur:"04:35",img:"images/v5.png",free:true},
+  {id:6,title:"家庭保险配置方案指南",views:"2.7万",dur:"06:20",img:"images/v6.png",free:false},
+  {id:7,title:"高血压人群的投保策略",views:"1.9万",dur:"04:48",img:"images/v7.png",free:false},
+  {id:8,title:"免健告产品真的靠谱吗？",views:"3.5万",dur:"05:30",img:"images/v8.png",free:false},
+  {id:9,title:"理赔流程全解析",views:"2.1万",dur:"04:15",img:"images/v9.png",free:true},
+  {id:10,title:"乳腺结节投保实操指南",views:"1.6万",dur:"03:55",img:"images/v10.png",free:false},
+  {id:11,title:"乙肝携带者如何买保险",views:"2.8万",dur:"05:42",img:"images/v11.png",free:false},
+  {id:12,title:"2026年热门重疾险横评",views:"3.9万",dur:"07:10",img:"images/v12.png",free:false},
 ];
 const MALL_PRODUCTS=[
   {id:1,name:"10元话费充值",img:"images/mall_phone.png",points:1000,type:"虚拟",stock:99,desc:"即时到账"},
@@ -877,7 +879,7 @@ function uTabs(){document.querySelectorAll(".tab-bar button").forEach(b=>{b.clas
 // -- Home --
 function rHome(){
   const vids=VIDEOS.slice(0,vidCount);
-  const vidCards=vids.map(v=>`<div class="video-card" data-vid="${v.id}"><div class="video-thumb"><img src="${v.img}" alt="" loading="lazy"/><div class="video-play"><div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div></div><div class="video-info"><div class="vt">${v.title}</div><div class="vd"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>${v.views} · ${v.dur}</div></div></div>`).join("");
+  const vidCards=vids.map(v=>`<div class="video-card" data-vid="${v.id}"><div class="video-thumb"><img src="${v.img}" alt="" loading="lazy"/><span class="video-badge${v.free?' free':''}">${v.free?'免费':'付费'}</span><div class="video-play"><div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div></div><div class="video-info"><div class="vt">${v.title}</div><div class="vd"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>${v.views} · ${v.dur}</div></div></div>`).join("");
   const moreBtn=vidCount<VIDEOS.length?`<button class="load-more-btn" id="loadMoreVid">点击加载更多</button>`:`<div style="text-align:center;padding:16px 0 8px;font-size:11px;color:#ccc">— 已经到底了 —</div>`;
 
   return`<div class="page active" style="display:flex">
@@ -923,7 +925,7 @@ function rHome(){
               <div class="prod-note">免健康告知，责任内一般既往症可保可赔</div>
             </div>
           </div>
-          <div class="prod-cta-full"><button id="prodBuyBtn">立即投保 解锁服务</button></div>
+
         </div>
       </div>
 
