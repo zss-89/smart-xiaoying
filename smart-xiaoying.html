@@ -1,0 +1,1673 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>智能小英 - 医疗核保助手</title>
+<style>
+@font-face{font-family:"AlibabaPuHuiTi";src:url("fonts/AlibabaPuHuiTi-3-55-Regular.ttf") format("truetype");font-weight:400;font-style:normal}
+@font-face{font-family:"AlibabaPuHuiTi";src:url("fonts/AlibabaPuHuiTi-3-65-Medium.ttf") format("truetype");font-weight:500;font-style:normal}
+@font-face{font-family:"AlibabaPuHuiTi";src:url("fonts/AlibabaPuHuiTi-3-75-SemiBold.ttf") format("truetype");font-weight:600;font-style:normal}
+@font-face{font-family:"AlibabaPuHuiTi";src:url("fonts/AlibabaPuHuiTi-3-85-Bold.ttf") format("truetype");font-weight:700;font-style:normal}
+:root{
+  --green:#5B8FF9;--green-dark:#3D6DD8;--green-light:#E8F0FE;--green-grad:linear-gradient(135deg,#5B8FF9,#7EABFF);
+  --bg:#F5F6FA;--white:#FFFFFF;--text-primary:#1A1A1A;--text-secondary:#666666;--text-tertiary:#999999;
+  --border:#EEEEEE;--shadow:0 2px 8px rgba(0,0,0,.04);--radius:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"AlibabaPuHuiTi","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:linear-gradient(160deg,#e8f0fe 0%,#f0f3f8 50%,#edf1f9 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+::-webkit-scrollbar{width:0;height:0}
+.phone{width:390px;height:780px;background:var(--bg);border-radius:44px;box-shadow:0 20px 60px rgba(0,0,0,.12),0 0 0 1px rgba(0,0,0,.05);overflow:hidden;display:flex;flex-direction:column;position:relative}
+.status-bar{background:var(--green);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:8px 28px 4px;font-size:11px;font-weight:500;flex-shrink:0}
+.status-bar .notch{width:90px;height:24px;background:#000;border-radius:0 0 16px 16px}
+
+/* Page system */
+.content{flex:1;overflow:hidden;display:flex;flex-direction:column;background:var(--bg)}
+.page{display:none;flex-direction:column;height:100%;overflow:hidden}
+.page.active{display:flex}
+
+/* Header */
+.gh{background:var(--green);color:#fff;padding:0 16px 12px;flex-shrink:0}
+.gh h2{font-size:17px;font-weight:600;letter-spacing:.3px}
+.gh .sub{font-size:11px;opacity:.8;margin-top:2px}
+
+/* Tab Bar */
+.tab-bar{flex-shrink:0;background:var(--white);display:flex;border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom)}
+.tab-bar button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 0 4px;background:none;border:none;cursor:pointer;color:var(--text-tertiary);transition:all .25s;font-size:10px;position:relative;gap:2px}
+.tab-bar button.active{color:var(--green)}
+.tab-bar button.active::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:20px;height:2px;background:var(--green);border-radius:0 0 2px 2px}
+.tab-bar button svg{width:22px;height:22px;stroke-width:1.8}
+.tab-bar button.active svg{stroke-width:2.2}
+.home-ind{flex-shrink:0;background:var(--white);display:flex;align-items:center;justify-content:center;padding:5px 0}
+.home-ind div{width:120px;height:4px;background:#ccc;border-radius:2px}
+
+/* Card */
+.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+
+/* Avatar */
+.av{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:600;flex-shrink:0}
+.av.lg{width:56px;height:56px;font-size:20px}
+.av-xl{width:64px;height:64px;font-size:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
+.av-1{background:linear-gradient(135deg,#8FAADC,#B4CBEB)}
+.av-2{background:linear-gradient(135deg,#7B9AD8,#9DB6E3)}
+.av-3{background:linear-gradient(135deg,#9F97C9,#B5AFDA)}
+.av-4{background:linear-gradient(135deg,#D4A0B0,#DEBCBC)}
+.av-5{background:linear-gradient(135deg,#82BDD8,#A5D4E4)}
+.av-6{background:linear-gradient(135deg,#D4A98A,#E2C5A9)}
+.av-colors{--c1:linear-gradient(135deg,#8FAADC,#B4CBEB);--c2:linear-gradient(135deg,#7B9AD8,#9DB6E3);--c3:linear-gradient(135deg,#9F97C9,#B5AFDA);--c4:linear-gradient(135deg,#D4A0B0,#DEBCBC);--c5:linear-gradient(135deg,#82BDD8,#A5D4E4);--c6:linear-gradient(135deg,#D4A98A,#E2C5A9)}
+
+/* Badge */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-ok{background:#E8F0FE;color:#5B8FF9}
+.badge-no{background:#FFF0F0;color:#FF4D4F}
+.badge-wait{background:#FFF7E6;color:#FA8C16}
+.badge-ex{background:#E6F7FF;color:#1890FF}
+
+/* ==================== Home Page ==================== */
+.home-scroll{flex:1;overflow-y:auto}
+.home-hero{position:relative;background:var(--green-grad);padding:0 0 6px;overflow:hidden}
+.home-hero::after{content:"";position:absolute;top:-30px;right:-30px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.08)}
+.home-hero::before{content:"";position:absolute;bottom:-20px;left:-30px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.05)}
+.home-hdr{padding:14px 16px 16px;position:relative;z-index:1}
+.home-hdr .brand{font-size:22px;font-weight:700;color:#fff;letter-spacing:1px}
+.hero-card{margin:0 16px 0 16px;border-radius:16px;background:rgba(255,255,255,.15);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);padding:10px 0 10px 20px;position:relative;z-index:1;display:flex;align-items:flex-start;gap:16px;flex-direction:row-reverse;height:165px;box-sizing:border-box}
+.hero-card .hero-illust{width:165px;height:145px;border-radius:0;object-fit:contain;flex-shrink:0;background:none;box-shadow:none;margin-right:-10px}
+.hero-card .hero-text{flex:1;text-align:left;min-width:0;margin-top:20px}
+.hero-card h3{font-size:18px;font-weight:700;color:#fff;margin-bottom:6px;margin-top:-20px;line-height:1.4;white-space:nowrap}
+.hero-card p{font-size:12px;color:rgba(255,255,255,.85);margin-bottom:14px;line-height:1.5}
+.hero-btn{display:inline-flex;align-items:center;gap:0;padding:9px 20px;background:#fff;color:var(--green);border:none;border-radius:24px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.1);transition:all .2s;white-space:nowrap}
+.hero-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,.15)}
+.hero-btn:active{transform:scale(.97)}
+
+.section{padding:16px}
+.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.section-hdr .st{font-size:15px;font-weight:600;color:var(--text-primary)}
+.section-hdr .more{font-size:12px;color:var(--green);cursor:pointer;display:flex;align-items:center;gap:2px;border:none;background:none}
+.section-hdr .more svg{width:14px;height:14px}
+
+/* Product promo banner */
+.prod-banner-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.prod-card-title{padding:16px 16px 0;font-size:16px;font-weight:700;color:var(--text-primary)}
+.prod-svc-title{padding:14px 16px 10px;font-size:14px;font-weight:700;color:var(--text-primary)}
+.prod-svc-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;padding:0 16px 12px}
+.prod-svc-item{display:flex;align-items:center;gap:5px;padding:4px 0}
+.prod-svc-item .svc-chk{width:14px;height:14px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.prod-svc-item .svc-chk svg{width:8px;height:8px;color:#fff}
+.prod-svc-item span{font-size:11px;color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prod-center{display:flex;gap:12px;padding:0 16px 14px;align-items:stretch}
+.prod-center .prod-img{width:102px;height:102px;border-radius:10px;object-fit:cover;flex-shrink:0}
+.prod-center .prod-info{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center}
+.prod-center .prod-name{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:6px}
+.prod-center .prod-price{display:flex;align-items:baseline;gap:3px;margin-bottom:4px}
+.prod-center .prod-price .p-num{font-size:22px;font-weight:800;color:#FA8C16}
+.prod-center .prod-price .p-unit{font-size:11px;color:var(--text-tertiary)}
+.prod-center .prod-price .p-sub{font-size:10px;color:var(--text-tertiary);margin-left:2px}
+.prod-center .prod-start{font-size:12px;color:var(--text-secondary)}
+.prod-center .prod-start strong{color:var(--text-primary);font-weight:600}
+.prod-center .prod-note{font-size:10px;color:var(--text-tertiary);margin-top:4px;line-height:1.4}
+.prod-cta-full{padding:0 16px 14px}
+.prod-cta-full button{width:100%;padding:12px 0;border-radius:24px;font-size:14px;font-weight:600;border:none;background:var(--green-grad);color:#fff;cursor:pointer;box-shadow:0 4px 16px rgba(91,143,249,.25);transition:all .2s}
+.prod-cta-full button:active{transform:scale(.97)}
+
+.video-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.video-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;cursor:pointer;transition:all .2s}
+.video-card:active{transform:scale(.97)}
+.video-thumb{position:relative;aspect-ratio:2/3;background:#e8e8ec;overflow:hidden}
+.video-thumb img{width:100%;height:100%;object-fit:cover}
+.video-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.video-play .play-btn{width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.video-play .play-btn svg{width:16px;height:16px;color:#fff;margin-left:2px}
+.video-info{padding:8px 10px}
+.video-info .vt{font-size:12px;font-weight:500;color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.video-info .vd{font-size:10px;color:var(--text-tertiary);margin-top:3px;display:flex;align-items:center;gap:4px}
+.load-more-btn{display:flex;align-items:center;justify-content:center;gap:0;width:auto;padding:8px 0;margin:12px auto 0;background:none;border:none;font-size:12px;color:var(--green);cursor:pointer;transition:all .2s;text-decoration:underline}
+.load-more-btn:hover{color:var(--green-dark)}
+
+/* ==================== Chat Page ==================== */
+.chat-wrap{display:flex;flex-direction:column;height:100%}
+.chat-hdr{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--green);color:#fff}
+.chat-hdr .bot-av{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center}
+.chat-hdr .info{flex:1}
+.chat-hdr .info .t{font-size:16px;font-weight:600}
+.chat-hdr .info .s{font-size:11px;opacity:.8;margin-top:1px}
+.chat-hdr .online{display:flex;align-items:center;gap:5px;font-size:11px;opacity:.8}
+.chat-hdr .online .dot{width:7px;height:7px;border-radius:50%;background:#93C5FD;animation:pulse 2s infinite}
+
+.chat-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:16px}
+.msg{display:flex;gap:8px;max-width:85%}
+.msg.user{flex-direction:row-reverse;margin-left:auto}
+.msg .m-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600;flex-shrink:0}
+.msg.assistant .m-av{background:var(--green)}
+.msg.user .m-av{background:linear-gradient(135deg,#4facfe,#00f2fe)}
+.msg .bbl{padding:10px 14px;font-size:13px;line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.msg.assistant .bbl{background:var(--white);color:var(--text-primary);border-radius:2px 12px 12px 12px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.msg.user .bbl{background:var(--green);color:#fff;border-radius:12px 2px 12px 12px}
+.msg .ts{font-size:10px;color:var(--text-tertiary);margin-top:4px;text-align:right}
+
+.typing{display:flex;gap:8px;max-width:85%}
+.typing .m-av{width:32px;height:32px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center}
+.typing .bbl{background:var(--white);border-radius:2px 12px 12px 12px;box-shadow:0 1px 4px rgba(0,0,0,.06);padding:12px 16px;display:flex;gap:5px}
+.typing .bbl span{width:6px;height:6px;background:#ccc;border-radius:50%;animation:bounce .6s infinite}
+.typing .bbl span:nth-child(2){animation-delay:.15s}
+.typing .bbl span:nth-child(3){animation-delay:.3s}
+
+.quick-row{padding:4px 16px 8px;position:relative}
+.qk-trigger{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--white);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s;box-shadow:var(--shadow)}
+.qk-trigger:active{border-color:var(--green);background:var(--green-light)}
+.qk-trigger.open{border-color:var(--green);border-radius:12px 12px 0 0;box-shadow:none}
+.qk-trigger .qk-label{font-size:12px;color:var(--text-tertiary);flex-shrink:0}
+.qk-trigger .qk-val{flex:1;font-size:13px;font-weight:600;color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qk-trigger .qk-arrow{width:16px;height:16px;color:var(--text-tertiary);transition:transform .25s;flex-shrink:0}
+.qk-trigger.open .qk-arrow{transform:rotate(180deg)}
+.qk-panel{max-height:0;overflow:hidden;transition:max-height .3s ease;background:var(--white);border:1px solid var(--green);border-top:none;border-radius:0 0 12px 12px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.qk-panel.open{max-height:220px}
+.quick-card{display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;transition:all .15s;border-bottom:1px solid var(--border)}
+.quick-card:last-child{border-bottom:none;border-radius:0 0 12px 12px}
+.quick-card:active{background:var(--green-light)}
+.quick-card:hover{background:var(--green-light)}
+.quick-card .qc-info{flex:1;min-width:0}
+.quick-card .qc-title{font-size:13px;font-weight:600;color:var(--text-primary)}
+.quick-card .qc-sub{font-size:11px;color:var(--text-tertiary);margin-top:2px}
+.quick-card .qc-check{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.quick-card .qc-check svg{width:10px;height:10px;color:transparent}
+.quick-card.selected .qc-check{background:var(--green);border-color:var(--green)}
+.quick-card.selected .qc-check svg{color:#fff}
+.quick-btn{display:none}
+
+.chat-bar{padding:8px 12px;background:var(--white);border-top:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.chat-bar input{flex:1;padding:9px 16px;background:var(--bg);border:1px solid transparent;border-radius:20px;font-size:13px;outline:none;transition:all .2s;color:var(--text-primary)}
+.chat-bar input:focus{border-color:var(--green);background:var(--white)}
+.chat-bar input::placeholder{color:var(--text-tertiary)}
+.upload-btn{width:36px;height:36px;border-radius:50%;background:var(--bg);border:none;color:var(--text-tertiary);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;position:relative}
+.upload-btn:hover{background:var(--green-light);color:var(--green)}
+.upload-btn:active{transform:scale(.92)}
+.upload-btn input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.file-bbl{background:var(--white);border-radius:2px 12px 12px 12px;box-shadow:0 1px 4px rgba(0,0,0,.06);padding:0;overflow:hidden;max-width:220px}
+.file-bbl .file-top{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--bg)}
+.file-bbl .file-ico{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.file-bbl .file-ico.img-type{background:#E6F7FF;color:#1890FF}
+.file-bbl .file-ico.doc-type{background:#FFF7E6;color:#FA8C16}
+.file-bbl .file-ico.pdf-type{background:#FFF0F0;color:#FF4D4F}
+.file-bbl .file-name{font-size:12px;color:var(--text-primary);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.file-bbl .file-size{font-size:10px;color:var(--text-tertiary);padding:0 12px 8px}
+.send-btn{width:36px;height:36px;border-radius:50%;background:var(--green);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.send-btn:disabled{background:#ddd;cursor:default}
+.send-btn:active:not(:disabled){transform:scale(.92)}
+
+/* ==================== List Pages ==================== */
+.search-wrap{padding:10px 16px;background:var(--white);border-bottom:1px solid var(--border)}
+.search-box{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg);border-radius:20px;border:1px solid transparent;transition:all .2s}
+.search-box:focus-within{border-color:var(--green);background:var(--white)}
+.search-box input{flex:1;background:transparent;border:none;font-size:13px;outline:none;color:var(--text-primary)}
+.search-box input::placeholder{color:var(--text-tertiary)}
+.search-box svg{width:16px;height:16px;color:var(--text-tertiary);flex-shrink:0}
+.clr-btn{background:none;border:none;color:var(--text-tertiary);cursor:pointer;padding:2px;display:flex}
+
+.list-area{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:10px}
+
+/* Stats */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);background:var(--white);border-bottom:1px solid var(--border)}
+.stats-row .st{text-align:center;padding:12px 0}
+.stats-row .st .n{font-size:20px;font-weight:700}
+.stats-row .st .l{font-size:10px;color:var(--text-tertiary);margin-top:2px}
+
+.filter-row{display:flex;gap:8px;padding:10px 16px;background:var(--white);border-bottom:1px solid var(--border);overflow-x:auto}
+.fbtn{padding:5px 14px;border-radius:16px;font-size:12px;font-weight:500;border:none;cursor:pointer;transition:all .2s;flex-shrink:0}
+.fbtn.on{background:var(--green);color:#fff}
+.fbtn:not(.on){background:var(--bg);color:var(--text-secondary)}
+.fbtn:not(.on):hover{background:#e8e8ec}
+
+/* Archive card */
+.a-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;cursor:pointer;transition:all .2s;display:flex;gap:12px;align-items:flex-start}
+.a-card:active{transform:scale(.98);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.a-card .c-info{flex:1;min-width:0}
+.a-card .c-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.a-card .c-name{font-size:14px;font-weight:600;color:var(--text-primary)}
+.a-card .c-meta{font-size:12px;color:var(--text-tertiary);margin-bottom:6px}
+.a-card .c-tag{display:flex;align-items:center;gap:4px;font-size:12px;color:#FA8C16;margin-bottom:4px}
+.a-card .c-tag svg{width:12px;height:12px;flex-shrink:0}
+.a-card .c-time{display:flex;align-items:center;gap:4px;font-size:11px;color:#ccc}
+.a-card .c-time svg{width:11px;height:11px}
+.a-card .c-detail{font-size:12px;color:var(--text-secondary);margin-top:6px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.5}
+.chev-r{color:#d9d9d9;flex-shrink:0}
+.chev-r svg{width:16px;height:16px}
+
+/* ==================== Detail Page ==================== */
+.dtl-hdr{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--green);color:#fff;flex-shrink:0}
+.dtl-hdr .bk{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.dtl-hdr .bk:hover{background:rgba(255,255,255,.3)}
+.dtl-hdr .bk svg{width:18px;height:18px}
+.dtl-hdr h2{font-size:16px;font-weight:600}
+
+.user-banner{display:flex;align-items:center;gap:14px;padding:16px;background:var(--white);margin-bottom:8px}
+.user-banner .uname{font-size:18px;font-weight:700;color:var(--text-primary)}
+.user-banner .umeta{font-size:13px;color:var(--text-secondary);margin-top:3px}
+.user-banner .utime{font-size:12px;color:var(--text-tertiary);margin-top:3px}
+
+.dtl-tabs{display:flex;background:var(--white);border-bottom:1px solid var(--border);padding:0 4px;margin-bottom:0}
+.dtl-tabs button{flex:1;padding:11px 0;font-size:13px;font-weight:500;text-align:center;border:none;border-bottom:2px solid transparent;cursor:pointer;background:none;color:var(--text-tertiary);transition:all .2s}
+.dtl-tabs button.on{color:var(--green);border-bottom-color:var(--green)}
+
+.dtl-body{flex:1;overflow-y:auto;padding:12px 16px}
+
+.d-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:12px}
+.d-card h4{font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.d-card h4 svg{width:16px;height:16px;color:var(--green)}
+
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.info-cell{background:var(--bg);border-radius:8px;padding:10px 12px}
+.info-cell .il{font-size:11px;color:var(--text-tertiary)}
+.info-cell .iv{font-size:13px;color:var(--text-primary);font-weight:500;margin-top:3px}
+
+/* Health Status Card */
+.hs-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px 16px;margin-bottom:12px;position:relative;overflow:hidden;border:1px solid var(--border)}
+.hs-card::after{content:"";position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:var(--green-light)}
+.hs-card::before{content:"";position:absolute;bottom:-20px;left:-20px;width:80px;height:80px;border-radius:50%;background:rgba(91,143,249,.03)}
+.hs-top{display:flex;align-items:center;gap:20px;position:relative;z-index:1}
+.hs-gauge{width:110px;height:60px;position:relative;flex-shrink:0}
+.hs-gauge svg{width:110px;height:60px}
+.hs-gauge .gauge-bg{fill:none;stroke:#E8E8EC;stroke-width:10;stroke-linecap:round}
+.hs-gauge .gauge-fill{fill:none;stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset .8s ease}
+.hs-score-wrap{text-align:center;position:absolute;bottom:0;left:50%;transform:translateX(-50%)}
+.hs-score-num{font-size:36px;font-weight:800;letter-spacing:-1px;line-height:1;color:var(--text-primary)}
+.hs-score-unit{font-size:12px;color:var(--text-tertiary);margin-top:2px}
+.hs-info{flex:1;min-width:0;position:relative;z-index:1}
+.hs-level{display:inline-block;padding:3px 12px;border-radius:12px;font-size:11px;font-weight:600;margin-bottom:8px}
+.hs-advice{font-size:12px;line-height:1.7;color:var(--text-secondary)}
+.hs-levels{display:flex;gap:6px;margin-top:16px;position:relative;z-index:1}
+.hs-levels .lv{flex:1;text-align:center;padding:6px 0;border-radius:8px;font-size:10px;font-weight:500;opacity:.5;transition:all .2s}
+.hs-levels .lv.active{opacity:1;transform:scale(1.05);box-shadow:0 2px 8px rgba(0,0,0,.1)}
+
+.ai-notice{background:var(--green-light);border:1px solid #C5D9F7;border-radius:8px;padding:10px 12px;margin-bottom:14px;display:flex;align-items:flex-start;gap:8px}
+.ai-notice svg{width:16px;height:16px;color:var(--green);flex-shrink:0;margin-top:1px}
+.ai-notice p{font-size:12px;color:var(--green-dark);line-height:1.5}
+.cond-text{font-size:13px;color:var(--text-secondary);line-height:1.8;white-space:pre-wrap}
+
+.ai-bottom-bar{flex-shrink:0;padding:12px 16px;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));background:var(--white);border-top:1px solid var(--border);box-shadow:0 -4px 16px rgba(0,0,0,.06)}
+.ai-interpret-btn{width:100%;padding:14px 18px;background:var(--green-grad);color:#fff;border:none;border-radius:16px;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:12px;box-shadow:0 4px 20px rgba(91,143,249,.3);transition:all .2s;position:relative;overflow:hidden}
+.ai-interpret-btn::after{content:"";position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);transition:none}
+.ai-interpret-btn:hover::after{left:100%;transition:left .6s ease}
+.ai-interpret-btn:active{transform:scale(.98);box-shadow:0 2px 10px rgba(91,143,249,.25)}
+.ai-btn-ico{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ai-btn-ico svg{width:20px;height:20px;color:#fff}
+.ai-btn-txt{flex:1;text-align:left}
+.ai-btn-txt .t1{font-size:15px;font-weight:600;letter-spacing:.3px}
+.ai-btn-txt .t2{font-size:11px;opacity:.8;margin-top:2px;font-weight:400}
+.ai-btn-arrow{width:20px;height:20px;flex-shrink:0;opacity:.7}
+
+/* AI Interpret Page */
+.ai-page{display:flex;flex-direction:column;height:100%;background:var(--bg)}
+.ai-hdr{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--green);color:#fff;flex-shrink:0}
+.ai-hdr .bk{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.ai-hdr .bk:hover{background:rgba(255,255,255,.3)}
+.ai-hdr .bk svg{width:18px;height:18px}
+.ai-hdr h2{font-size:16px;font-weight:600}
+.ai-body{flex:1;overflow-y:auto;padding:16px}
+
+.ai-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center}
+.ai-loading .pulse-ring{width:80px;height:80px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:24px}
+.ai-loading .pulse-ring::before{content:"";position:absolute;inset:0;border-radius:50%;border:3px solid var(--green);border-top-color:transparent;animation:aiSpin 1.2s linear infinite}
+.ai-loading .pulse-ring svg{width:36px;height:36px;color:var(--green)}
+.ai-loading .ld-title{font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:8px}
+.ai-loading .ld-step{font-size:13px;color:var(--text-secondary);margin-bottom:16px;min-height:20px}
+.ai-progress{width:200px;height:4px;border-radius:2px;background:#E8E8EC;overflow:hidden}
+.ai-progress .bar{height:100%;border-radius:2px;background:var(--green-grad);transition:width .3s ease}
+@keyframes aiSpin{to{transform:rotate(360deg)}}
+
+.ai-result-hdr{text-align:center;padding:20px 16px;background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:12px}
+.ai-result-hdr .rh-ico{width:56px;height:56px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center}
+.ai-result-hdr .rh-ico svg{width:28px;height:28px}
+.ai-result-hdr .rh-name{font-size:18px;font-weight:700;color:var(--text-primary)}
+.ai-result-hdr .rh-meta{font-size:12px;color:var(--text-tertiary);margin-top:4px}
+.ai-risk-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600;margin-top:12px}
+
+.ai-section{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:12px}
+.ai-section .as-title{font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.ai-section .as-title svg{width:16px;height:16px}
+.ai-section .as-body{font-size:13px;color:var(--text-secondary);line-height:1.8}
+.ai-disease-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.ai-disease-item:last-child{border-bottom:none}
+.ai-disease-item .di-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:6px}
+.ai-disease-item .di-name{font-size:13px;font-weight:600;color:var(--text-primary)}
+.ai-disease-item .di-desc{font-size:12px;color:var(--text-tertiary);margin-top:2px;line-height:1.6}
+.ai-rec-tag{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:8px;font-size:12px;font-weight:500;margin:4px 4px 4px 0}
+.ai-disclaimer{background:#FFF7E6;border:1px solid #FFE0A0;border-radius:8px;padding:10px 12px;font-size:11px;color:#8C6D1F;line-height:1.6;margin-top:12px;display:flex;align-items:flex-start;gap:6px}
+.ai-disclaimer svg{width:14px;height:14px;flex-shrink:0;margin-top:1px;color:#D4A017}
+.ai-again-btn{width:100%;padding:13px;background:var(--white);color:var(--green);border:1.5px solid var(--green);border-radius:24px;font-size:14px;font-weight:600;cursor:pointer;margin-top:8px;transition:all .2s}
+.ai-again-btn:active{background:var(--green-light);transform:scale(.97)}
+
+.img-day{margin-bottom:12px}
+.img-day .day-hdr{display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.img-day .day-hdr .dd{font-size:13px;font-weight:500;color:var(--text-primary)}
+.img-day .day-hdr .cnt{font-size:10px;color:var(--text-tertiary);background:var(--bg);padding:2px 8px;border-radius:10px}
+.img-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.img-item{aspect-ratio:1;border-radius:8px;overflow:hidden;cursor:pointer;transition:all .2s;position:relative}
+.img-item:hover{opacity:.85;transform:scale(1.02)}
+.img-item img{width:100%;height:100%;object-fit:cover}
+.img-upload-card{aspect-ratio:1;border-radius:8px;border:2px dashed #d0d5dd;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;position:relative;gap:4px}
+.img-upload-card:hover{border-color:var(--green);background:var(--green-light)}
+.img-upload-card:active{transform:scale(.95)}
+.img-upload-card svg{width:24px;height:24px;color:var(--text-tertiary)}
+.img-upload-card:hover svg{color:var(--green)}
+.img-upload-card span{font-size:11px;color:var(--text-tertiary)}
+.img-upload-card:hover span{color:var(--green)}
+.img-upload-card input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+
+.rec-card{margin-bottom:10px}
+.rec-card .r-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.rec-card .r-date{font-size:12px;color:var(--text-tertiary)}
+.rec-card .r-prod{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--text-primary);margin-bottom:8px}
+.rec-card .r-prod svg{width:14px;height:14px;color:var(--text-tertiary)}
+.rec-card .r-txt{font-size:12px;color:var(--text-secondary);line-height:1.6;padding:10px 12px;background:var(--bg);border-radius:8px}
+
+.re-btn{width:100%;padding:13px;background:var(--green-grad);color:#fff;border:none;border-radius:24px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 16px rgba(91,143,249,.25);transition:all .2s;margin-top:4px}
+.re-btn:hover{box-shadow:0 6px 20px rgba(91,143,249,.35)}
+.re-btn:active{transform:scale(.97)}
+.re-btn svg{width:16px;height:16px}
+
+/* ==================== Profile ==================== */
+.prof-top{background:var(--green-grad);padding:28px 20px 24px;color:#fff;flex-shrink:0;position:relative;overflow:hidden}
+.prof-edit-btn{position:absolute;top:16px;right:16px;z-index:2;display:flex;align-items:center;gap:4px;padding:6px 14px;background:rgba(255,255,255,.2);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.3);border-radius:20px;color:#fff;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s}
+.prof-edit-btn:active{transform:scale(.95);background:rgba(255,255,255,.3)}
+.prof-edit-btn svg{width:14px;height:14px}
+.prof-edit-hdr{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--green);color:#fff;flex-shrink:0}
+.prof-edit-hdr .bk{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.prof-edit-hdr .bk:hover{background:rgba(255,255,255,.3)}
+.prof-edit-hdr .bk svg{width:18px;height:18px}
+.prof-edit-hdr h2{font-size:16px;font-weight:600}
+.prof-edit-body{flex:1;overflow-y:auto;padding:16px}
+.prof-edit-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px 16px}
+.prof-edit-card .pe-title{font-size:15px;font-weight:600;color:var(--text-primary);margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.prof-edit-card .pe-title svg{width:18px;height:18px;color:var(--green)}
+.pe-field{display:flex;align-items:center;padding:14px 0;border-bottom:1px solid var(--border)}
+.pe-field:last-child{border-bottom:none}
+.pe-field .pe-label{width:80px;font-size:13px;color:var(--text-secondary);flex-shrink:0}
+.pe-field .pe-value{flex:1;font-size:14px;color:var(--text-primary);font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;padding:4px 0;transition:color .2s}
+.pe-field .pe-value:hover{color:var(--green)}
+.pe-field .pe-value .pe-edit-ico{width:14px;height:14px;color:var(--text-tertiary);opacity:0;transition:opacity .2s;flex-shrink:0}
+.pe-field .pe-value:hover .pe-edit-ico{opacity:1}
+.pe-field .pe-value.pe-empty{color:var(--text-tertiary);font-weight:400}
+.pe-field .pe-inline{flex:1;padding:6px 10px;border:none;border-bottom:1.5px solid var(--green);font-size:14px;color:var(--text-primary);background:var(--green-light);outline:none;font-family:inherit;box-sizing:border-box;border-radius:4px 4px 0 0}
+.pe-field .pe-gender{display:flex;gap:10px}
+.pe-field .pe-gender label{display:flex;align-items:center;gap:5px;font-size:14px;color:var(--text-primary);cursor:pointer;padding:6px 16px;border:1.5px solid var(--border);border-radius:8px;transition:all .2s}
+.pe-field .pe-gender input{display:none}
+.pe-field .pe-gender input:checked+label{border-color:var(--green);background:var(--green-light);color:var(--green);font-weight:500}
+.pe-save-btn{width:100%;padding:13px;background:var(--green-grad);color:#fff;border:none;border-radius:24px;font-size:15px;font-weight:600;cursor:pointer;margin-top:20px;box-shadow:0 4px 16px rgba(91,143,249,.25);transition:all .2s}
+.pe-save-btn:active{transform:scale(.97)}
+.prof-top::after{content:"";position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.08)}
+.prof-top::before{content:"";position:absolute;bottom:-20px;left:-20px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.05)}
+.prof-user{display:flex;align-items:center;gap:14px;position:relative;z-index:1}
+.prof-user .p-av{width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;border:2px solid rgba(255,255,255,.4)}
+.prof-user .p-name{font-size:20px;font-weight:700}
+.prof-user .p-phone{font-size:12px;opacity:.8;margin-top:3px;display:flex;align-items:center;gap:4px}
+.prof-user .p-phone svg{width:12px;height:12px}
+.prof-user .p-role{display:inline-block;margin-top:6px;font-size:11px;background:rgba(255,255,255,.2);padding:2px 10px;border-radius:10px;backdrop-filter:blur(4px)}
+
+.prof-stats{display:flex;gap:12px;margin-top:18px;position:relative;z-index:1}
+.prof-stats .ps{flex:1;background:rgba(255,255,255,.18);border-radius:12px;padding:14px 12px;text-align:center;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.15)}
+.prof-stats .ps .pn{font-size:28px;font-weight:700;letter-spacing:-.5px}
+.prof-stats .ps .pl{font-size:11px;opacity:.85;margin-top:3px}
+
+.prof-menu{flex:auto;min-height:0;overflow-y:auto;padding:12px 16px}
+.m-item{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s}
+.m-item:active{transform:scale(.98)}
+.m-item .m-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.m-item .m-ico svg{width:20px;height:20px}
+.m-item .m-txt{flex:1}
+.m-item .m-txt .mt{font-size:14px;font-weight:500;color:var(--text-primary)}
+.m-item .m-txt .md{font-size:12px;color:var(--text-tertiary);margin-top:2px}
+
+.ver-info{text-align:center;padding:20px;font-size:11px;color:#ccc}
+
+/* ==================== Toolbox Section ==================== */
+.toolbox-section{padding:0 16px 12px}
+.toolbox-title{font-size:15px;font-weight:600;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.toolbox-title svg{width:18px;height:18px;color:var(--green)}
+.toolbox-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.tool-item{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:all .2s}
+.tool-item:active{transform:scale(.92)}
+.tool-item .ti-ico{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.tool-item .ti-ico svg{width:22px;height:22px}
+.tool-item .ti-label{font-size:11px;color:var(--text-secondary);white-space:nowrap}
+
+/* ==================== Wallet Entry Card (Profile) ==================== */
+.wallet-entry{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:0;margin-bottom:12px;overflow:hidden;cursor:pointer;transition:all .2s}
+.wallet-entry:active{transform:scale(.98)}
+.wp-top{background:var(--green-grad);padding:16px 16px 14px;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden}
+.wp-top::after{content:"";position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.08)}
+.wp-ico{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.wp-ico svg{width:22px;height:22px;color:#fff}
+.wp-info{flex:1}
+.wp-label{font-size:12px;color:rgba(255,255,255,.8)}
+.wp-balance{font-size:22px;font-weight:700;color:#fff;margin-top:2px;letter-spacing:-.5px}
+.wp-arrow{color:rgba(255,255,255,.6);flex-shrink:0}
+.wp-arrow svg{width:18px;height:18px}
+.wp-bottom{padding:10px 16px;display:flex;justify-content:space-around}
+.wp-action{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--green);font-weight:500}
+.wp-action svg{width:15px;height:15px}
+
+/* ==================== Wallet Detail Page ==================== */
+.wallet-page{display:flex;flex-direction:column;height:100%}
+.wallet-hdr{background:var(--green-grad);padding:0 16px;flex-shrink:0;position:relative;overflow:hidden}
+.wallet-hdr::after{content:"";position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.06)}
+.wallet-hdr::before{content:"";position:absolute;bottom:-30px;left:-20px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.04)}
+.wh-nav{display:flex;align-items:center;gap:10px;padding:10px 0;position:relative;z-index:1}
+.wh-nav .bk{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.wh-nav .bk:hover{background:rgba(255,255,255,.3)}
+.wh-nav .bk svg{width:18px;height:18px}
+.wh-nav h2{font-size:16px;font-weight:600;color:#fff}
+.wh-balance{padding:10px 0 24px;text-align:center;position:relative;z-index:1}
+.wh-balance .wb-label{font-size:13px;color:rgba(255,255,255,.75)}
+.wh-balance .wb-amount{font-size:40px;font-weight:800;color:#fff;margin-top:6px;letter-spacing:-1px}
+.wh-balance .wb-amount .wb-unit{font-size:18px;font-weight:600;margin-left:2px}
+.wh-actions{display:flex;gap:12px;padding:0 0 20px;justify-content:center;position:relative;z-index:1}
+.wh-btn{padding:11px 0;border-radius:24px;font-size:14px;font-weight:600;border:none;cursor:pointer;transition:all .2s;flex:1;max-width:140px;text-align:center}
+.wh-btn:active{transform:scale(.96)}
+.wh-btn.recharge{background:#fff;color:var(--green);box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.wh-btn.withdraw{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4)}
+.wallet-body{flex:1;overflow-y:auto;background:var(--bg);padding:16px}
+.wb-section-title{font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.wb-section-title svg{width:16px;height:16px;color:var(--green)}
+.wb-txn-list{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.wb-txn{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border)}
+.wb-txn:last-child{border-bottom:none}
+.wb-txn-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.wb-txn-ico.in{background:#E8F8E8}
+.wb-txn-ico.out{background:#FFF0F0}
+.wb-txn-ico svg{width:18px;height:18px}
+.wb-txn-info{flex:1;min-width:0}
+.wb-txn-note{font-size:13px;font-weight:500;color:var(--text-primary)}
+.wb-txn-time{font-size:11px;color:var(--text-tertiary);margin-top:2px}
+.wb-txn-amt{font-size:15px;font-weight:700;flex-shrink:0}
+.wb-txn-amt.in{color:#52C41A}
+.wb-txn-amt.out{color:#FF4D4F}
+.wallet-empty{text-align:center;padding:40px 20px;color:var(--text-tertiary);font-size:13px}
+
+/* ==================== Risk Query Page ==================== */
+.risk-hdr{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--green);color:#fff;flex-shrink:0}
+.risk-hdr .bk{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.risk-hdr .bk:hover{background:rgba(255,255,255,.3)}
+.risk-hdr .bk svg{width:18px;height:18px}
+.risk-hdr h2{font-size:16px;font-weight:600}
+.risk-body{flex:1;overflow-y:auto;padding:16px}
+.risk-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px 16px}
+.risk-card .rc-title{font-size:15px;font-weight:600;color:var(--text-primary);margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.risk-card .rc-title svg{width:18px;height:18px;color:var(--green)}
+.risk-field{margin-bottom:16px}
+.risk-field .rf-label{font-size:13px;font-weight:500;color:var(--text-primary);margin-bottom:6px;display:block}
+.risk-field .rf-input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text-primary);background:var(--white);outline:none;transition:border-color .2s;font-family:inherit;box-sizing:border-box}
+.risk-field .rf-input:focus{border-color:var(--green)}
+.risk-field .rf-input::placeholder{color:var(--text-tertiary)}
+.risk-query-btn{width:100%;padding:13px;background:var(--green-grad);color:#fff;border:none;border-radius:24px;font-size:15px;font-weight:600;cursor:pointer;margin-top:8px;box-shadow:0 4px 16px rgba(91,143,249,.25);transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.risk-query-btn:active{transform:scale(.97)}
+.risk-query-btn svg{width:18px;height:18px}
+.risk-result{margin-top:16px}
+.risk-result .rr-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px 16px;margin-bottom:12px}
+.risk-result .rr-status{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.risk-result .rr-status .rr-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.risk-result .rr-status .rr-text{font-size:15px;font-weight:600}
+.risk-result .rr-status .rr-sub{font-size:12px;color:var(--text-tertiary);margin-top:2px}
+.risk-result .rr-detail{background:var(--bg);border-radius:8px;padding:14px}
+.risk-result .rr-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px}
+.risk-result .rr-row .rr-l{color:var(--text-secondary)}
+.risk-result .rr-row .rr-v{color:var(--text-primary);font-weight:500}
+.risk-result .rr-note{font-size:11px;color:var(--text-tertiary);text-align:center;margin-top:12px}
+
+/* ==================== Points Mall ==================== */
+.mall-header{background:var(--green-grad);padding:20px 16px 24px;color:#fff}
+.mall-header .mh-top{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.mall-header .mh-top .back-btn{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;color:#fff}
+.mall-header .mh-title{font-size:17px;font-weight:600}
+.mall-points{background:rgba(255,255,255,.12);border-radius:12px;padding:14px 16px}
+.mall-points .mp-label{font-size:12px;opacity:.85}
+.mall-points .mp-value{font-size:28px;font-weight:800;margin-top:4px}
+.mall-tabs{display:flex;gap:0;padding:0 16px;border-bottom:1px solid var(--border)}
+.mall-tabs button{flex:1;padding:12px 0;font-size:13px;font-weight:500;color:var(--text-tertiary);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .2s}
+.mall-tabs button.on{color:var(--green);border-bottom-color:var(--green);font-weight:600}
+.mall-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px 16px}
+.mall-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;cursor:pointer;transition:all .2s}
+.mall-card:active{transform:scale(.97)}
+.mall-card .mc-img{height:100px;display:flex;align-items:center;justify-content:center;font-size:48px;background:var(--bg-light)}
+.mall-card .mc-body{padding:10px}
+.mall-card .mc-name{font-size:12px;font-weight:500;color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mall-card .mc-desc{font-size:10px;color:var(--text-tertiary);margin-top:2px}
+.mall-card .mc-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.mall-card .mc-points{font-size:14px;font-weight:700;color:#FA8C16}
+.mall-card .mc-points span{font-size:10px;font-weight:400}
+.mall-card .mc-tag{font-size:9px;padding:2px 6px;border-radius:4px;background:var(--green-light);color:var(--green);font-weight:500}
+.mall-scroll{flex:1;overflow-y:auto}
+
+/* ==================== Points Earning Section ==================== */
+.pts-section{margin:12px 16px 0;background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.pts-header{background:var(--green-grad);padding:16px;display:flex;align-items:center;gap:12px;position:relative;overflow:hidden}
+.pts-header::after{content:"";position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.08)}
+.pts-header-ico{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pts-header-ico svg{width:22px;height:22px;color:#fff}
+.pts-header-info{flex:1}
+.pts-header-label{font-size:12px;color:rgba(255,255,255,.8)}
+.pts-header-num{font-size:26px;font-weight:800;color:#fff;margin-top:2px;letter-spacing:-.5px}
+.pts-header-unit{font-size:13px;font-weight:500;margin-left:2px}
+.pts-title{padding:14px 16px 10px;font-size:14px;font-weight:600;color:var(--text-primary);display:flex;align-items:center;gap:6px}
+.pts-title svg{width:16px;height:16px;color:var(--green)}
+.pts-task{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border)}
+.pts-task:last-child{border-bottom:none}
+.pts-task-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pts-task-ico svg{width:18px;height:18px}
+.pts-task-info{flex:1;min-width:0}
+.pts-task-name{font-size:13px;font-weight:500;color:var(--text-primary)}
+.pts-task-desc{font-size:11px;color:var(--text-tertiary);margin-top:2px}
+.pts-task-btn{padding:6px 16px;border-radius:16px;font-size:12px;font-weight:600;border:none;cursor:pointer;transition:all .2s;flex-shrink:0;white-space:nowrap}
+.pts-task-btn:active{transform:scale(.94)}
+.pts-task-btn.go{background:var(--green-grad);color:#fff;box-shadow:0 2px 8px rgba(91,143,249,.2)}
+.pts-task-btn.done{background:var(--bg);color:var(--text-tertiary);cursor:default;box-shadow:none}
+.pts-streak{padding:12px 16px 16px;display:flex;align-items:center;gap:6px;justify-content:center}
+.pts-day{width:40px;height:50px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;font-weight:500;gap:3px;border:1.5px solid var(--border);color:var(--text-tertiary);background:var(--bg);transition:all .2s}
+.pts-day.active{border-color:var(--green);background:var(--green-light);color:var(--green)}
+.pts-day.today{border-color:var(--green);background:var(--green-grad);color:#fff;box-shadow:0 2px 8px rgba(91,143,249,.3)}
+.pts-day.bonus{border-color:#FA8C16;background:#FFF7E6;color:#FA8C16}
+.pts-day.bonus.today{background:linear-gradient(135deg,#FA8C16,#FFC069);color:#fff;border-color:#FA8C16;box-shadow:0 2px 8px rgba(250,140,22,.3)}
+.pts-day .day-num{font-size:12px;font-weight:700}
+.pts-day .day-pts{font-size:9px;opacity:.8;font-weight:500}
+.pts-toast{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);background:rgba(0,0,0,.75);color:#fff;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:600;z-index:200;white-space:nowrap;pointer-events:none;transition:transform .2s ease}
+.pts-toast.show{transform:translate(-50%,-50%) scale(1)}
+
+/* ==================== About Inscare ==================== */
+.about-hdr{background:var(--green-grad);padding:16px 16px 28px;color:#fff;flex-shrink:0;position:relative;overflow:hidden}
+.about-hdr::after{content:"";position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.08)}
+.about-hdr .ah-top{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.about-hdr .ah-top .bk{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;color:#fff;transition:all .15s}
+.about-hdr .ah-top .bk:active{background:rgba(255,255,255,.3)}
+.about-hdr .ah-top .bk svg{width:18px;height:18px}
+.about-hdr .ah-top span{font-size:17px;font-weight:600}
+.about-hdr .ah-brand{display:flex;align-items:center;gap:12px;position:relative;z-index:1}
+.about-hdr .ah-logo{width:52px;height:52px;border-radius:14px;background:rgba(255,255,255,.2);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;border:1.5px solid rgba(255,255,255,.3)}
+.about-hdr .ah-info .ah-name{font-size:20px;font-weight:700}
+.about-hdr .ah-info .ah-slogan{font-size:12px;opacity:.8;margin-top:3px}
+.about-body{flex:1;overflow-y:auto;padding:16px}
+.about-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:12px}
+.about-card .ac-title{font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.about-card .ac-title svg{width:16px;height:16px;color:var(--green);flex-shrink:0}
+.about-card .ac-text{font-size:13px;color:var(--text-secondary);line-height:1.8}
+.about-links{display:flex;flex-direction:column;gap:0}
+.about-link{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:all .2s}
+.about-link:last-child{border-bottom:none}
+.about-link:active{opacity:.6}
+.about-link .al-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.about-link .al-ico svg{width:18px;height:18px}
+.about-link .al-txt{flex:1;font-size:14px;font-weight:500;color:var(--text-primary)}
+.about-link .al-arrow{color:#d9d9d9}
+.about-link .al-arrow svg{width:16px;height:16px}
+.about-ver{text-align:center;padding:16px 0 8px;font-size:11px;color:#ccc}
+
+/* ==================== Modals ==================== */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:50;padding:24px;opacity:0;pointer-events:none;transition:opacity .25s}
+.modal-bg.show{opacity:1;pointer-events:auto}
+.modal-box{background:var(--white);border-radius:16px;width:100%;max-width:340px;overflow:hidden;transform:translateY(20px);transition:transform .25s}
+.modal-bg.show .modal-box{transform:translateY(0)}
+.modal-hdr{background:var(--green-grad);color:#fff;padding:16px 20px}
+.modal-hdr h3{font-size:16px;font-weight:600}
+.modal-hdr p{font-size:12px;opacity:.85;margin-top:2px}
+.modal-body{padding:20px}
+.modal-ft{padding:0 20px 20px}
+.modal-ft button{width:100%;padding:12px;background:var(--bg);color:var(--text-secondary);border:none;border-radius:20px;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s}
+.modal-ft button:hover{background:#e8e8ec}
+
+/* WeChat Auth Modal */
+.wx-auth-body{text-align:center;padding:30px 20px}
+.wx-auth-body .wx-icon{width:64px;height:64px;margin:0 auto 16px;background:#07C160;border-radius:16px;display:flex;align-items:center;justify-content:center}
+.wx-auth-body .wx-icon svg{width:36px;height:36px;color:#fff}
+.wx-auth-body .wx-title{font-size:17px;font-weight:600;color:var(--text-primary);margin-bottom:6px}
+.wx-auth-body .wx-desc{font-size:13px;color:var(--text-tertiary);line-height:1.5;margin-bottom:24px}
+.wx-auth-btn{width:100%;padding:13px;background:#07C160;color:#fff;border:none;border-radius:24px;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s}
+.wx-auth-btn:active{transform:scale(.97);opacity:.9}
+.wx-auth-btn svg{width:20px;height:20px}
+.wx-auth-cancel{width:100%;padding:12px;background:none;border:none;color:var(--text-tertiary);font-size:13px;cursor:pointer;margin-top:10px}
+
+/* Profile Setup Modal */
+.setup-body{padding:24px 20px}
+.setup-body .setup-title{font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:4px}
+.setup-body .setup-desc{font-size:12px;color:var(--text-tertiary);margin-bottom:20px}
+.setup-form .sf-group{margin-bottom:16px}
+.setup-form .sf-label{font-size:13px;font-weight:500;color:var(--text-primary);margin-bottom:6px;display:block}
+.setup-form .sf-input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text-primary);background:var(--white);outline:none;transition:border-color .2s;box-sizing:border-box;font-family:inherit}
+.setup-form .sf-input:focus{border-color:var(--green)}
+.setup-form .sf-select{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text-primary);background:var(--white);outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;cursor:pointer;box-sizing:border-box;font-family:inherit}
+.setup-form .sf-select:focus{border-color:var(--green)}
+.setup-form .sf-toggle{display:flex;gap:10px}
+.setup-form .sf-toggle label{flex:1;padding:11px 0;border:1.5px solid var(--border);border-radius:10px;text-align:center;font-size:14px;color:var(--text-secondary);cursor:pointer;transition:all .2s}
+.setup-form .sf-toggle input{display:none}
+.setup-form .sf-toggle input:checked+label{border-color:var(--green);background:var(--green-light);color:var(--green);font-weight:600}
+.setup-submit{width:100%;padding:13px;background:var(--green-grad);color:#fff;border:none;border-radius:24px;font-size:15px;font-weight:600;cursor:pointer;margin-top:8px;transition:all .2s}
+.setup-submit:active{transform:scale(.97)}
+.setup-submit:disabled{opacity:.5;cursor:not-allowed}
+
+.spinner-wrap{text-align:center;padding:24px 0}
+.spinner{width:40px;height:40px;border:3px solid #E0EAFB;border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto}
+.spinner-txt{font-size:13px;color:var(--text-secondary);margin-top:14px}
+.spinner-sub{font-size:12px;color:var(--text-tertiary);margin-top:4px}
+
+.res-icon{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.res-title{font-size:17px;font-weight:700;color:var(--text-primary);text-align:center;margin-bottom:14px}
+.res-detail{background:var(--bg);border-radius:10px;padding:14px;font-size:13px;color:var(--text-secondary);line-height:1.6}
+.res-note{text-align:center;font-size:10px;color:var(--text-tertiary);margin-top:12px}
+
+.img-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:60;padding:16px;opacity:0;pointer-events:none;transition:opacity .25s}
+.img-overlay.show{opacity:1;pointer-events:auto;cursor:pointer}
+.img-overlay img{max-width:100%;max-height:88vh;border-radius:8px;box-shadow:0 8px 40px rgba(0,0,0,.3)}
+
+.empty{text-align:center;padding:48px 16px;color:var(--text-tertiary)}
+.empty svg{width:48px;height:48px;margin-bottom:12px;opacity:.35}
+.empty p{font-size:13px}
+
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.slide-up{animation:slideUp .3s ease}
+</style>
+</head>
+<body>
+<div class="phone" id="app">
+  <div class="status-bar"><span>9:41</span><div class="notch"></div><span style="display:flex;gap:6px;align-items:center"><span>5G</span><span>100%</span></span></div>
+  <div class="content" id="content"></div>
+  <div class="tab-bar" id="tabBar">
+    <button class="active" data-page="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>首页</span></button>
+    <button data-page="chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>小英</span></button>
+    <button data-page="archives"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg><span>档案管理</span></button>
+    <button data-page="underwriting"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg><span>核保记录</span></button>
+    <button data-page="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>个人中心</span></button>
+  </div>
+  <div class="home-ind"><div></div></div>
+</div>
+
+<div class="modal-bg" id="reModal"><div class="modal-box"><div class="modal-hdr"><h3>重新核保</h3><p id="reModalName"></p></div><div class="modal-body" id="reModalBody"></div><div class="modal-ft"><button id="reModalClose">取消</button></div></div></div>
+<div class="img-overlay" id="imgModal"><img id="imgModalImg" src="" alt="" /></div>
+
+<div class="modal-bg" id="agrModal">
+  <div class="modal-box" style="max-width:360px;max-height:75vh;display:flex;flex-direction:column">
+    <div class="modal-body" id="agrBody" style="flex:1;overflow-y:auto;padding:20px 16px"></div>
+    <div class="modal-ft" style="padding:12px 16px"><button id="agrClose">关闭</button></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="wxAuthModal">
+  <div class="modal-box">
+    <div class="wx-auth-body">
+      <div class="wx-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 0 1 .213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 0 0 .167-.054l1.903-1.114a.864.864 0 0 1 .717-.098 10.16 10.16 0 0 0 2.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178A1.17 1.17 0 0 1 4.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178 1.17 1.17 0 0 1-1.162-1.178c0-.651.52-1.18 1.162-1.18zm5.34 2.867c-1.797-.052-3.746.512-5.28 1.786-1.72 1.428-2.687 3.72-1.78 6.22.942 2.453 3.666 4.229 6.884 4.229.826 0 1.622-.12 2.361-.336a.722.722 0 0 1 .598.082l1.584.926a.272.272 0 0 0 .14.047c.134 0 .24-.111.24-.247 0-.06-.023-.12-.038-.177l-.327-1.233a.582.582 0 0 1-.023-.156.49.49 0 0 1 .201-.398C23.024 18.48 24 16.82 24 14.98c0-3.21-2.931-5.837-7.062-6.122zm-2.18 2.768c.535 0 .969.44.969.982a.976.976 0 0 1-.969.983.976.976 0 0 1-.969-.983c0-.542.434-.982.97-.982zm4.844 0c.535 0 .969.44.969.982a.976.976 0 0 1-.969.983.976.976 0 0 1-.969-.983c0-.542.434-.982.97-.982z"/></svg></div>
+      <div class="wx-title">微信授权登录</div>
+      <div class="wx-desc">授权后可使用个人中心的全部功能<br/>包括客户管理、核保记录等</div>
+      <button class="wx-auth-btn" id="wxAuthBtn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 0 1 .213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 0 0 .167-.054l1.903-1.114a.864.864 0 0 1 .717-.098 10.16 10.16 0 0 0 2.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348z"/></svg>微信一键授权</button>
+      <button class="wx-auth-cancel" id="wxAuthCancel">暂不授权</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="profileSetupModal">
+  <div class="modal-box">
+    <div class="setup-body">
+      <div class="setup-title">完善个人信息</div>
+      <div class="setup-desc">请完善以下信息以获取完整服务</div>
+      <div class="setup-form">
+        <div class="sf-group">
+          <span class="sf-label">是否为代理人</span>
+          <div class="sf-toggle">
+            <input type="radio" name="isAgent" id="agentYes" value="yes"/>
+            <label for="agentYes">是</label>
+            <input type="radio" name="isAgent" id="agentNo" value="no"/>
+            <label for="agentNo">否</label>
+          </div>
+        </div>
+        <div class="sf-group">
+          <span class="sf-label">所属经纪公司</span>
+          <select class="sf-select" id="companySelect">
+            <option value="">请选择经纪公司</option>
+            <option value="阳光保险经纪">阳光保险经纪</option>
+            <option value="明亚保险经纪">明亚保险经纪</option>
+            <option value="大童保险经纪">大童保险经纪</option>
+            <option value="永达理保险经纪">永达理保险经纪</option>
+            <option value="泛华保险经纪">泛华保险经纪</option>
+            <option value="中民保险经纪">中民保险经纪</option>
+            <option value="梧桐树保险经纪">梧桐树保险经纪</option>
+            <option value="小雨伞保险经纪">小雨伞保险经纪</option>
+            <option value="慧择保险经纪">慧择保险经纪</option>
+            <option value="其他">其他</option>
+          </select>
+        </div>
+        <div class="sf-group">
+          <span class="sf-label">经纪人编号</span>
+          <input class="sf-input" id="agentIdInput" type="text" placeholder="请输入您的经纪人编号"/>
+        </div>
+      </div>
+      <button class="setup-submit" id="setupSubmitBtn">确认提交</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== Data =====
+const DATA=[
+  {id:1,name:"张伟",age:45,gender:"男",phone:"138****1234",createdAt:"2026-06-10 14:30",pre:"高血压（2级）、2型糖尿病",cond:"患者于2019年确诊高血压2级，长期服用氨氯地平片5mg qd，血压控制在130/85mmHg左右。2021年确诊2型糖尿病，目前口服二甲双胍0.5g bid，空腹血糖维持在6.5-7.2mmol/L之间。无其他重大慢性疾病史，无手术史，无过敏史。",
+    imgs:{"2026-06-10":["https://picsum.photos/seed/m1a/300/200","https://picsum.photos/seed/m1b/300/200"],"2026-06-08":["https://picsum.photos/seed/m1c/300/200"],"2026-06-05":["https://picsum.photos/seed/m1d/300/200","https://picsum.photos/seed/m1e/300/200","https://picsum.photos/seed/m1f/300/200"]},
+    recs:[{id:101,date:"2026-06-10",con:"除外",prod:"某重疾险",txt:"因高血压2级及2型糖尿病，除外心脑血管相关疾病及糖尿病并发症。"},{id:102,date:"2026-05-20",con:"延期",prod:"某医疗险",txt:"近期血糖波动较大，建议稳定3个月后重新申请。"}]},
+  {id:2,name:"李娜",age:32,gender:"女",phone:"139****5678",createdAt:"2026-06-09 10:15",pre:"甲状腺结节（TI-RADS 3类）",cond:"患者2025年体检发现甲状腺结节，TI-RADS 3类，大小约0.8cm×0.5cm，边界清晰，无钙化。甲状腺功能检查正常（TSH 2.1mIU/L，FT3 4.8pmol/L，FT4 16.2pmol/L）。无甲状腺疾病家族史。建议定期随访。",
+    imgs:{"2026-06-09":["https://picsum.photos/seed/m2a/300/200","https://picsum.photos/seed/m2b/300/200"]},
+    recs:[{id:201,date:"2026-06-09",con:"标体",prod:"某重疾险",txt:"甲状腺结节TI-RADS 3类，甲功正常，标准体承保。"}]},
+  {id:3,name:"王强",age:55,gender:"男",phone:"137****9012",createdAt:"2026-06-08 09:45",pre:"冠心病（支架术后）、高脂血症",cond:"患者2024年因急性心肌梗死行PCI术，于前降支植入药物洗脱支架1枚。术后规律服用阿司匹林、氯吡格雷、阿托伐他汀等药物。目前心功能NYHA I级，LVEF 55%。合并高脂血症，LDL-C 2.8mmol/L。戒烟中。",
+    imgs:{"2026-06-08":["https://picsum.photos/seed/m3a/300/200"],"2026-06-03":["https://picsum.photos/seed/m3b/300/200","https://picsum.photos/seed/m3c/300/200"]},
+    recs:[{id:301,date:"2026-06-08",con:"拒保",prod:"某重疾险",txt:"冠心病支架术后不足2年，心功能虽为NYHA I级，但整体风险较高，暂不予承保。"},{id:302,date:"2026-06-08",con:"拒保",prod:"某定期寿险",txt:"冠心病支架术后，死亡风险显著增加，拒保。"}]},
+  {id:4,name:"赵敏",age:28,gender:"女",phone:"136****3456",createdAt:"2026-06-07 16:20",pre:"乳腺结节（BI-RADS 2类）",cond:"患者2025年体检发现双侧乳腺多发小结节，最大约0.6cm×0.4cm，BI-RADS 2类，考虑良性可能。无乳头溢液，无腋窝淋巴结肿大。无乳腺癌家族史。建议6个月后复查乳腺超声。",
+    imgs:{"2026-06-07":["https://picsum.photos/seed/m4a/300/200"]},
+    recs:[{id:401,date:"2026-06-07",con:"标体",prod:"某重疾险",txt:"乳腺结节BI-RADS 2类，考虑良性，标准体承保。"}]},
+  {id:5,name:"陈建国",age:50,gender:"男",phone:"135****7890",createdAt:"2026-06-05 11:30",pre:"乙肝大三阳、轻度脂肪肝",cond:"患者既往乙肝大三阳（HBsAg+、HBeAg+、HBcAb+），HBV-DNA 1.2×10^5 IU/mL，肝功能ALT 58U/L（轻度升高），AST 42U/L。腹部超声提示轻度脂肪肝，肝实质回声稍增强。目前未行抗病毒治疗。",
+    imgs:{"2026-06-05":["https://picsum.photos/seed/m5a/300/200","https://picsum.photos/seed/m5b/300/200"],"2026-06-01":["https://picsum.photos/seed/m5c/300/200"]},
+    recs:[{id:501,date:"2026-06-05",con:"除外",prod:"某医疗险",txt:"乙肝大三阳且肝功能异常，除外肝脏相关疾病（含肝炎、肝硬化、肝癌）。"}]},
+  {id:6,name:"孙丽",age:38,gender:"女",phone:"133****2345",createdAt:"2026-06-03 08:50",pre:"子宫肌瘤",cond:"患者2025年超声检查发现子宫肌瘤，大小约2.5cm×2.0cm，位于肌壁间，月经量稍多但周期正常。血红蛋白118g/L，无贫血。无其他妇科疾病。建议定期复查超声。",
+    imgs:{"2026-06-03":["https://picsum.photos/seed/m6a/300/200"]},
+    recs:[{id:601,date:"2026-06-03",con:"标体",prod:"某重疾险",txt:"子宫肌瘤<5cm，无贫血，标准体承保。"}]}
+];
+const ME={name:"刘经理",av:"刘",phone:"150****8888",role:"阳光保险经纪公司",gender:"男",contactPhone:"15012348888",email:"liujl@inscare.com",company:"阳光保险经纪",agentId:"YG20260001"};
+const AVCL=["av-1","av-2","av-3","av-4","av-5","av-6"];
+function avC(n){return AVCL[n.charCodeAt(0)%AVCL.length]}
+
+function bCls(c){return{标体:"badge-ok",拒保:"badge-no",延期:"badge-wait",除外:"badge-ex"}[c]||"badge-wait"}
+function bIco(c){
+  const m={标体:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+  拒保:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+  延期:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+  除外:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>'};
+  return m[c]||"";
+}
+
+// ===== State =====
+let page="home",detId=null,detTab="info",vidCount=6,msgs=[{r:"a",c:"你好，我是英仕无忧!\n\n我是你的专属健康险智核助手，可以帮你\n√快速完成在线智能核保\n√解答承保条件与保障范围疑问\n√指导健康告知如何如实填写\n\n告诉我你的情况，我来帮你找到最合适的方案\n\n（内容由AI生成，仅供参考，不构成专业医疗或法律建议）",t:ts()}],inp="",aSearch="",uSearch="",uFilter="全部";
+let isAuthorized=false,isProfileSetup=false;
+let selectedProduct="平安人生免健告版";
+let aiLoading=false,aiResult=null,aiPatient=null;
+let walletBalance=3680.50,walletAction="",walletTxns=[
+  {type:"in",amt:2000,note:"充值",time:"2026-06-20 14:30"},
+  {type:"in",amt:1000,note:"充值",time:"2026-06-15 10:00"},
+  {type:"out",amt:500,note:"提现",time:"2026-06-12 16:45"},
+  {type:"in",amt:1500,note:"充值",time:"2026-06-08 11:20"}
+];
+let userPoints=28560,checkinStreak=3,checkinToday=false;
+let tasksDone={browse:false,chat:false,video:false};
+
+const VIDEOS=[
+  {id:1,title:"什么是健康告知？投保前必看",views:"2.3万",dur:"03:25",img:"images/v1.png"},
+  {id:2,title:"重疾险vs医疗险，区别在哪？",views:"1.8万",dur:"04:12",img:"images/v2.png"},
+  {id:3,title:"带病投保的正确姿势",views:"3.1万",dur:"05:08",img:"images/v3.png"},
+  {id:4,title:"核保结论解读：标体/除外/拒保",views:"1.5万",dur:"03:50",img:"images/v4.png"},
+  {id:5,title:"甲状腺结节还能买保险吗？",views:"4.2万",dur:"04:35",img:"images/v5.png"},
+  {id:6,title:"家庭保险配置方案指南",views:"2.7万",dur:"06:20",img:"images/v6.png"},
+  {id:7,title:"高血压人群的投保策略",views:"1.9万",dur:"04:48",img:"images/v7.png"},
+  {id:8,title:"免健告产品真的靠谱吗？",views:"3.5万",dur:"05:30",img:"images/v8.png"},
+  {id:9,title:"理赔流程全解析",views:"2.1万",dur:"04:15",img:"images/v9.png"},
+  {id:10,title:"乳腺结节投保实操指南",views:"1.6万",dur:"03:55",img:"images/v10.png"},
+  {id:11,title:"乙肝携带者如何买保险",views:"2.8万",dur:"05:42",img:"images/v11.png"},
+  {id:12,title:"2026年热门重疾险横评",views:"3.9万",dur:"07:10",img:"images/v12.png"},
+];
+const MALL_PRODUCTS=[
+  {id:1,name:"10元话费充值",img:"images/mall_phone.png",points:1000,type:"虚拟",stock:99,desc:"即时到账"},
+  {id:2,name:"50元京东卡",img:"images/mall_jdcard.png",points:5000,type:"虚拟",stock:50,desc:"电子卡密"},
+  {id:3,name:"全身体检套餐",img:"images/mall_checkup.png",points:15000,type:"虚拟",stock:30,desc:"三甲医院"},
+  {id:4,name:"抽纸巾3包装",img:"images/mall_tissue.png",points:500,type:"实物",stock:200,desc:"包邮到家"},
+  {id:5,name:"保温水杯",img:"🥤",points:2000,type:"实物",stock:100,desc:"316不锈钢"},
+  {id:6,name:"30元话费充值",img:"images/mall_phone.png",points:3000,type:"虚拟",stock:80,desc:"即时到账"},
+  {id:7,name:"100元京东卡",img:"images/mall_jdcard.png",points:10000,type:"虚拟",stock:30,desc:"电子卡密"},
+  {id:8,name:"口腔护理套装",img:"🪥",points:1500,type:"实物",stock:150,desc:"牙膏+牙刷"},
+  {id:9,name:"颈椎按摩仪",img:"💆",points:8000,type:"实物",stock:40,desc:"便携充电款"},
+  {id:10,name:"50元话费充值",img:"images/mall_phone.png",points:5000,type:"虚拟",stock:60,desc:"即时到账"},
+  {id:11,name:"深度体检套餐",img:"images/mall_checkup.png",points:25000,type:"虚拟",stock:20,desc:"含CT检查"},
+  {id:12,name:"洗手液3瓶装",img:"🧴",points:800,type:"实物",stock:180,desc:"抑菌配方"},
+  {id:13,name:"护眼台灯",img:"💡",points:3500,type:"实物",stock:70,desc:"LED无频闪"},
+  {id:14,name:"200元京东卡",img:"images/mall_jdcard.png",points:20000,type:"虚拟",stock:15,desc:"电子卡密"},
+  {id:15,name:"雨伞",img:"☂️",points:1200,type:"实物",stock:120,desc:"自动折叠款"},
+  {id:16,name:"充电宝",img:"🔋",points:4500,type:"实物",stock:55,desc:"10000mAh"},
+  {id:17,name:"维生素礼盒",img:"💊",points:2800,type:"实物",stock:90,desc:"多种维生素"},
+  {id:18,name:"运动手环",img:"⌚",points:6000,type:"实物",stock:45,desc:"心率监测"},
+];
+let mallCount=8;
+function ts(){const d=new Date();return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")}
+function aiR(m){const t=m.toLowerCase();if(/高血压|糖尿病|结节|疾病|症状|咨询/.test(t))return"根据您描述的症状，我为您做以下分析：\n\n【初步评估】\n该症状可能与多种因素相关，建议进一步检查以明确诊断。\n\n【建议检查项目】\n1. 血常规、生化全套\n2. 相关影像学检查（如B超、CT等）\n3. 必要时行专科会诊\n\n【核保影响分析】\n该疾病对核保的影响取决于具体诊断结果、严重程度及治疗情况。请在确诊后提供完整病历资料，我将为您做详细核保评估。";if(/核保|投保|保险|承保/.test(t))return"好的，我来为您进行核保分析。根据您提供的资料：\n\n【核保评估】\n· 风险等级：中等风险\n· 主要风险因素：既往疾病史\n\n【核保建议】\n· 重疾险：建议除外相关疾病\n· 医疗险：除外该疾病相关费用\n· 定期寿险：标准体或加费承保\n\n结论建议：除外承保\n\n以上仅为AI辅助建议，最终核保结论请以人工核保审核为准。";return"感谢您的咨询。根据您的描述，我建议您：\n\n1. 提供更详细的病史信息\n2. 上传相关检查报告\n3. 说明需要咨询的具体问题\n\n这样我可以为您提供更精准的分析和建议。"}
+
+// ===== SVG Icons =====
+const IC={
+  bot:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/></svg>',
+  send:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>',
+  heart:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+  shield:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+  camera:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>',
+  alert:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+  clock:'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+  chevR:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>',
+  chevL:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>',
+  user:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+  file:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+  activity:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>',
+  refresh:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>',
+  phone:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
+  search:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+  close:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+  imgIco:'<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',
+  emptyDoc:'<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>',
+  emptyClip:'<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>',
+  check:'<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5B8FF9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+  xCirc:'<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FF4D4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+  clk28:'<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FA8C16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+  min28:'<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1890FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>',
+  upload:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>',
+  fileIco:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+  imgFileIco:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>'
+};
+
+// ===== Render =====
+function render(){
+  const el=document.getElementById("content"),tb=document.getElementById("tabBar");
+  if(detId!==null){tb.style.display="none";el.innerHTML=rDetail();bDetail();}
+  else if(page==="mall"){tb.style.display="none";el.innerHTML=rMall();bMall();}
+  else if(page==="profileEdit"){tb.style.display="none";el.innerHTML=rProfileEdit();bProfileEdit();}
+  else if(page==="riskQuery"){tb.style.display="none";el.innerHTML=rRiskQuery();bRiskQuery();}
+  else if(page==="aiInterpret"){tb.style.display="none";el.innerHTML=rAiInterpret();bAiInterpret();}
+  else if(page==="about"){tb.style.display="none";el.innerHTML=rAbout();bAbout();}
+  else if(page==="wallet"){tb.style.display="none";el.innerHTML=rWallet();bWallet();}
+  else{tb.style.display="flex";uTabs();el.innerHTML=({"home":rHome,"chat":rChat,"archives":rArchives,"underwriting":rUW,"profile":rProfile})[page]();({"home":bHome,"chat":bChat,"archives":bArchives,"underwriting":bUW,"profile":bProfile})[page]();}
+}
+function uTabs(){document.querySelectorAll(".tab-bar button").forEach(b=>{b.classList.toggle("active",b.dataset.page===page)})}
+
+// -- Home --
+function rHome(){
+  const vids=VIDEOS.slice(0,vidCount);
+  const vidCards=vids.map(v=>`<div class="video-card" data-vid="${v.id}"><div class="video-thumb"><img src="${v.img}" alt="" loading="lazy"/><div class="video-play"><div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div></div><div class="video-info"><div class="vt">${v.title}</div><div class="vd"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>${v.views} · ${v.dur}</div></div></div>`).join("");
+  const moreBtn=vidCount<VIDEOS.length?`<button class="load-more-btn" id="loadMoreVid">点击加载更多</button>`:`<div style="text-align:center;padding:16px 0 8px;font-size:11px;color:#ccc">— 已经到底了 —</div>`;
+
+  return`<div class="page active" style="display:flex">
+    <div class="home-scroll">
+      <div class="home-hero">
+        <div class="home-hdr"><div class="brand">inscare</div></div>
+        <div class="hero-card">
+          <img class="hero-illust" src="images/hero.png" alt="智能核保"/>
+          <div class="hero-text">
+            <h3>专业医学知识 · 智能核保意见</h3>
+            <p>基于AI的医疗核保助手，为您提供专业的疾病咨询和保险核保建议</p>
+            <button class="hero-btn" id="heroChatBtn">点击获取专家在线答疑</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="prod-banner-card">
+          <div class="prod-card-title">大家都在买</div>
+          <div class="prod-svc-title">添加保障 解锁11项重磅服务</div>
+          <div class="prod-svc-grid">
+            <div class="prod-svc-item"><div class="svc-chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><span>重疾绿通</span></div>
+            <div class="prod-svc-item"><div class="svc-chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><span>免现金住院</span></div>
+            <div class="prod-svc-item"><div class="svc-chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><span>MDT多学科会诊</span></div>
+            <div class="prod-svc-item"><div class="svc-chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><span>基因检测</span></div>
+            <div class="prod-svc-item"><div class="svc-chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><span>院外特药直付</span></div>
+            <div class="prod-svc-item"><div class="svc-chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><span>肿瘤类器官药敏检测</span></div>
+            <div class="prod-svc-item"><div class="svc-chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><span>购药折扣</span></div>
+            <div class="prod-svc-item"><div class="svc-chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><span>免费护工3天</span></div>
+            <div class="prod-svc-item"><div class="svc-chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><span>术后居家康护</span></div>
+            <div class="prod-svc-item"><div class="svc-chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><span>门诊绿通</span></div>
+            <div class="prod-svc-item"><div class="svc-chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><span>临床前沿治疗直通车</span></div>
+          </div>
+          <div class="prod-center">
+            <img class="prod-img" src="images/product-family.png" alt=""/>
+            <div class="prod-info">
+              <div class="prod-name">平安人生免健告版</div>
+              <div class="prod-price">
+                <span class="p-num">600万</span>
+                <span class="p-unit">赔付总额</span>
+              </div>
+              <div class="prod-start">低至 <strong style="color:#FA8C16">523元/年</strong> 起</div>
+              <div class="prod-note">免健康告知，责任内一般既往症可保可赔</div>
+            </div>
+          </div>
+          <div class="prod-cta-full"><button id="prodBuyBtn">立即投保 解锁服务</button></div>
+        </div>
+      </div>
+
+      <div class="section" style="padding-top:0;margin-top:-2px;padding-bottom:20px">
+        <div class="section-hdr"><span class="st">保险知识科普</span></div>
+        <div class="video-grid">${vidCards}</div>
+        ${moreBtn}
+      </div>
+    </div>
+  </div>`;
+}
+function bHome(){
+  document.getElementById("heroChatBtn")?.addEventListener("click",()=>{page="chat";render()});
+  document.getElementById("prodBuyBtn")?.addEventListener("click",()=>{page="chat";msgs.push({r:"u",c:"我想了解一下平安人生免健告版本的产品详情",t:ts()});inp="";render();const sc=document.getElementById("cScroll");const tip=document.createElement("div");tip.className="typing";tip.innerHTML=`<div class="m-av">${IC.bot}</div><div class="bbl"><span></span><span></span><span></span></div>`;sc.appendChild(tip);sc.scrollTop=sc.scrollHeight;setTimeout(()=>{msgs.push({r:"a",c:"好的，为您介绍「平安人生 · 免健告版本」：\n\n【产品亮点】\n1. 免健康告知：无需填写健康告知，既往病史不影响投保\n2. 价格亲民：年缴低至198元起，覆盖重疾、医疗、意外多重保障\n3. 增值服务：赠送在线问诊、绿色通道就医、专属健康管理等VIP权益\n\n【保障范围】\n· 重大疾病保障：100种重疾，确诊即赔\n· 医疗保障：住院费用报销\n· 意外保障：意外伤害/身故保障\n\n如您有具体的健康状况需要评估，我可以为您做进一步的核保分析。",t:ts()});render()},2000)});
+  document.getElementById("loadMoreVid")?.addEventListener("click",()=>{vidCount=Math.min(vidCount+6,VIDEOS.length);render()});
+}
+
+// -- Chat --
+function rChat(){
+  const ms=msgs.map(m=>{
+    if(m.r==="a")return`<div class="msg assistant slide-up"><div class="m-av">${IC.bot}</div><div style="flex:1"><div class="bbl">${eh(m.c)}</div><div class="ts">${m.t}</div></div></div>`;
+    if(m.r==="file"){
+      const ext=(m.fname||"").split(".").pop().toLowerCase();
+      const isImg=["jpg","jpeg","png","gif","bmp","webp"].includes(ext);
+      const isPdf=ext==="pdf";
+      const icoCls=isImg?"img-type":isPdf?"pdf-type":"doc-type";
+      const ico=isImg?IC.imgFileIco:IC.fileIco;
+      return`<div class="msg user slide-up"><div class="m-av">${ME.av[0]}</div><div><div class="file-bbl"><div class="file-top"><div class="file-ico ${icoCls}">${ico}</div><span class="file-name">${eh(m.fname)}</span></div><div class="file-size">${m.fsize}</div></div><div class="ts">${m.t}</div></div></div>`;
+    }
+    return`<div class="msg user slide-up"><div class="m-av">${ME.av[0]}</div><div><div class="bbl">${eh(m.c)}</div><div class="ts">${m.t}</div></div></div>`;
+  }).join("");
+  const products=[{n:"平安人生免健告版",s:"无需填写健康告知，核保更友好",t:"我想了解平安人生免健告版的产品详情"},{n:"平安人生易保版",s:"投保流程简化，适合快速配置",t:"我想了解平安人生易保版的产品详情"},{n:"平安人生标准版",s:"标准健告与保障方案",t:"我想了解平安人生标准版的产品详情"}];
+  const checkSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+  const arrowSvg='<svg class="qk-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+  const qk=msgs.length<=1?`<div class="quick-row"><div class="qk-trigger" id="qkTrigger"><span class="qk-label">产品版本</span><span class="qk-val" id="qkVal">${eh(selectedProduct)}</span>${arrowSvg}</div><div class="qk-panel" id="qkPanel">${products.map(p=>`<div class="quick-card${p.n===selectedProduct?' selected':''}" data-t="${eh(p.t)}" data-n="${eh(p.n)}"><div class="qc-info"><div class="qc-title">${eh(p.n)}</div><div class="qc-sub">${eh(p.s)}</div></div><div class="qc-check">${checkSvg}</div></div>`).join("")}</div></div>`:"";
+  return`<div class="page active" style="display:flex"><div class="chat-wrap"><div class="chat-hdr"><div class="bot-av">${IC.bot}</div><div class="info"><div class="t">智能小英</div><div class="s">医疗咨询 · 智能核保</div></div><div class="online"><div class="dot"></div>在线</div></div><div class="chat-msgs" id="cScroll">${ms}</div>${qk}<div class="chat-bar"><label class="upload-btn" title="上传文件">${IC.upload}<input type="file" id="fileUp" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt"/></label><input id="cInp" placeholder="输入您的问题..." value="${ea(inp)}"/><button class="send-btn" id="sendB" ${!inp.trim()?"disabled":""}>${IC.send}</button></div></div></div>`;
+}
+function bChat(){
+  const inp2=document.getElementById("cInp"),sb=document.getElementById("sendB");
+  if(inp2){inp2.addEventListener("input",e=>{inp=e.target.value;sb.disabled=!inp.trim()});inp2.addEventListener("keydown",e=>{if(e.key==="Enter")doSend()})}
+  if(sb)sb.addEventListener("click",doSend);
+  const trig=document.getElementById("qkTrigger"),panel=document.getElementById("qkPanel"),qkValEl=document.getElementById("qkVal");
+  if(trig){trig.addEventListener("click",()=>{const isOpen=trig.classList.contains("open");if(isOpen){trig.classList.remove("open");panel.classList.remove("open")}else{trig.classList.add("open");panel.classList.add("open")}});}
+  document.querySelectorAll(".quick-card").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".quick-card").forEach(c=>c.classList.remove("selected"));b.classList.add("selected");selectedProduct=b.dataset.n;if(qkValEl)qkValEl.textContent=selectedProduct;trig.classList.remove("open");panel.classList.remove("open");inp=b.dataset.t;inp2.value=inp;sb.disabled=false;inp2.focus()}));
+  document.querySelectorAll(".quick-btn").forEach(b=>b.addEventListener("click",()=>{inp=b.dataset.t;inp2.value=inp;sb.disabled=false;inp2.focus()}));
+  const sc=document.getElementById("cScroll");if(sc)sc.scrollTop=sc.scrollHeight;
+  const fu=document.getElementById("fileUp");
+  if(fu)fu.addEventListener("change",e=>{
+    const f=e.target.files[0];if(!f)return;
+    const size=f.size<1024?f.size+"B":f.size<1048576?(f.size/1024).toFixed(1)+"KB":(f.size/1048576).toFixed(1)+"MB";
+    msgs.push({r:"file",fname:f.name,fsize:size,t:ts()});
+    e.target.value="";
+    render();
+    const sc2=document.getElementById("cScroll");
+    const tip=document.createElement("div");tip.className="typing";tip.innerHTML=`<div class="m-av">${IC.bot}</div><div class="bbl"><span></span><span></span><span></span></div>`;sc2.appendChild(tip);sc2.scrollTop=sc2.scrollHeight;
+    setTimeout(()=>{msgs.push({r:"a",c:"已收到您上传的文件「"+f.name+"」。\n\n我正在对文件内容进行智能分析，以下是初步结果：\n\n【文件识别】\n已成功读取文件内容，包含医学检查相关数据。\n\n【分析建议】\n1. 检验指标已提取，部分指标存在异常标记\n2. 建议结合临床症状综合判断\n3. 如需核保评估，请补充患者基本信息\n\n您可以继续描述相关问题，我会结合上传的文件为您做进一步分析。",t:ts()});render()},2000);
+  });
+}
+function doSend(){if(!inp.trim())return;msgs.push({r:"u",c:inp.trim(),t:ts()});inp="";render();const sc=document.getElementById("cScroll");const tip=document.createElement("div");tip.className="typing";tip.id="tipEl";tip.innerHTML=`<div class="m-av">${IC.bot}</div><div class="bbl"><span></span><span></span><span></span></div>`;sc.appendChild(tip);sc.scrollTop=sc.scrollHeight;const last=msgs[msgs.length-1].c;setTimeout(()=>{msgs.push({r:"a",c:aiR(last),t:ts()});render()},1500)}
+
+// -- Archives --
+function rArchives(){
+  let ls=DATA.slice();if(aSearch.trim())ls=ls.filter(a=>a.name.includes(aSearch.trim()));ls.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  const cs=ls.length===0?`<div class="empty">${IC.emptyDoc}<p>未找到匹配的档案</p></div>`:ls.map(a=>`<div class="a-card" data-id="${a.id}"><div class="av ${avC(a.name)}">${a.name[0]}</div><div class="c-info"><div class="c-top"><span class="c-name">${a.name}</span><span class="chev-r">${IC.chevR}</span></div><div class="c-meta">${a.gender} · ${a.age}岁</div><div class="c-tag">${IC.alert}${a.pre}</div><div class="c-time">${IC.clock}${a.createdAt}</div></div></div>`).join("");
+  return`<div class="page active" style="display:flex"><div class="gh"><h2>档案管理</h2><div class="sub">共 ${DATA.length} 份健康档案</div></div><div class="search-wrap"><div class="search-box">${IC.search}<input id="aSI" placeholder="搜索客户姓名..." value="${ea(aSearch)}"/>${aSearch?`<button class="clr-btn" id="aClr">${IC.close}</button>`:""}</div></div><div class="list-area">${cs}</div></div>`;
+}
+function bArchives(){
+  const si=document.getElementById("aSI");if(si)si.addEventListener("input",e=>{aSearch=e.target.value;render()});
+  document.getElementById("aClr")?.addEventListener("click",()=>{aSearch="";render()});
+  document.querySelectorAll(".a-card").forEach(c=>c.addEventListener("click",()=>{detId=+c.dataset.id;detTab="info";render()}));
+}
+
+// -- Detail --
+function getHealthStatus(a){
+  const c=a.cond.toLowerCase();
+  if(/冠心病|心梗|支架|心脏/.test(c))return{score:35,level:"危急",color:"#FF4D4F",bg:"rgba(255,77,79,.2)",advice:"您的健康状态较差，存在严重心血管疾病风险。建议立即启动专项健康管理，尽快复查心功能及相关指标。",idx:0};
+  if(/乙肝|肝|脂肪肝/.test(c))return{score:48,level:"风险",color:"#FF6B35",bg:"rgba(255,107,53,.2)",advice:"您的健康状态存在明确风险信号。建议启动专项健康管理，3个月内复查肝功能及病毒载量。",idx:1};
+  if(/结节|甲状腺|乳腺/.test(c))return{score:78,level:"良好",color:"#52C41A",bg:"rgba(82,196,26,.2)",advice:"您的健康状态良好，结节分级较低。建议定期复查超声，关注分级变化即可。",idx:4};
+  if(/肌瘤|子宫/.test(c))return{score:75,level:"良好",color:"#52C41A",bg:"rgba(82,196,26,.2)",advice:"您的健康状态较好，肌瘤体积较小无贫血。建议每6-12个月复查妇科超声。",idx:4};
+  if(a.age>=50)return{score:55,level:"预警",color:"#FA8C16",bg:"rgba(250,140,22,.2)",advice:"您的健康状态一般，存在一定风险因素。建议加强健康监测，半年内复查关键指标。",idx:2};
+  return{score:65,level:"一般",color:"#FAAD14",bg:"rgba(250,173,20,.2)",advice:"您的健康状态一般，存在明确风险信号。建议启动专项健康管理，3个月内复查关键指标。",idx:3};
+}
+function rDetail(){
+  const a=DATA.find(x=>x.id===detId);if(!a)return"";
+  const tabs=[["info","基本信息"],["conditions","既往症病史"],["images","疾病图片"],["records","核保记录"]];
+  const th=tabs.map(([k,l])=>`<button class="${detTab===k?"on":""}" data-t="${k}">${l}</button>`).join("");
+  let body="";
+  if(detTab==="info"){
+    const its=[["姓名",a.name],["年龄",a.age+"岁"],["性别",a.gender],["电话",a.phone],["建档时间",a.createdAt],["档案编号","DA-"+String(a.id).padStart(6,"0")]];
+    const hs=getHealthStatus(a);
+    const gaugeR=45,gaugeCx=55,gaugeCy=55,gaugeCirc=Math.PI*gaugeR;
+    const gaugeOffset=gaugeCirc*(1-hs.score/100);
+    const gaugeSvg=`<svg viewBox="0 0 110 60"><path class="gauge-bg" d="M10,55 A45,45 0 0,1 100,55"/><path class="gauge-fill" d="M10,55 A45,45 0 0,1 100,55" stroke="${hs.color}" style="stroke-dasharray:${gaugeCirc};stroke-dashoffset:${gaugeOffset}"/></svg>`;
+    const lvls=[{n:"危急",c:"#FF4D4F",bg:"rgba(255,77,79,.25)"},{n:"风险",c:"#FF6B35",bg:"rgba(255,107,53,.25)"},{n:"预警",c:"#FA8C16",bg:"rgba(250,140,22,.25)"},{n:"一般",c:"#FAAD14",bg:"rgba(250,173,20,.25)"},{n:"良好",c:"#52C41A",bg:"rgba(82,196,26,.25)"}];
+    const lvlHtml=lvls.map((l,i)=>`<div class="lv${i===hs.idx?' active':''}" style="background:${l.bg};color:${l.c}">${l.n}</div>`).join("");
+    const hsCard=`<div class="hs-card"><div class="hs-top"><div class="hs-gauge">${gaugeSvg}<div class="hs-score-wrap"><div class="hs-score-num">${hs.score}</div><div class="hs-score-unit">分</div></div></div><div class="hs-info"><span class="hs-level" style="background:${hs.bg};color:${hs.color}">健康${hs.level}</span><div class="hs-advice">${hs.advice}</div></div></div><div class="hs-levels">${lvlHtml}</div></div>`;
+    body=`<div class="d-card"><h4>${IC.user}基本信息</h4><div class="info-grid">${its.map(([l,v])=>`<div class="info-cell"><div class="il">${l}</div><div class="iv">${v}</div></div>`).join("")}</div></div><div class="d-card"><h4 style="color:#FA8C16">${IC.alert.replace('currentColor','#FA8C16')}既往症概要</h4><p style="font-size:13px;color:var(--text-secondary);line-height:1.7">${a.pre}</p></div>${hsCard}`;
+  }else if(detTab==="conditions"){
+    body=`<div class="d-card"><h4>${IC.activity}既往症病史<span style="margin-left:auto;font-size:10px;color:var(--text-tertiary);background:var(--bg);padding:3px 10px;border-radius:10px;font-weight:400">由智能小英总结</span></h4><div class="ai-notice"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><p>以下病史信息由智能小英AI根据客户提交的病历资料自动总结生成，仅供参考。</p></div><div class="cond-text">${a.cond}</div></div>`;
+  }else if(detTab==="images"){
+    const days=Object.entries(a.imgs).sort((x,y)=>new Date(y[0])-new Date(x[0]));
+    const uploadCard=`<label class="img-upload-card" title="上传图片"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>上传图片</span><input type="file" id="imgUpload" accept="image/*" multiple/></label>`;
+    if(!days.length)body=`<div class="d-card img-day"><div class="day-hdr"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="dd">今天</span></div><div class="img-grid">${uploadCard}</div></div>`;
+    else body=days.map(([d,imgs],i)=>{const grid=i===0?`${imgs.map(im=>`<div class="img-item" data-s="${im}"><img src="${im}" alt="" loading="lazy"/></div>`).join("")}${uploadCard}`:`${imgs.map(im=>`<div class="img-item" data-s="${im}"><img src="${im}" alt="" loading="lazy"/></div>`).join("")}`;return`<div class="d-card img-day"><div class="day-hdr">${IC.clock}<span class="dd">${d}</span><span class="cnt">${imgs.length}张</span></div><div class="img-grid">${grid}</div></div>`}).join("");
+  }else if(detTab==="records"){
+    if(!a.recs.length)body=`<div class="empty">${IC.emptyClip}<p>暂无核保记录</p></div>`;
+    else{const rcs=a.recs.map(r=>`<div class="d-card rec-card"><div class="r-top"><span class="r-date">${r.date}</span><span class="badge ${bCls(r.con)}">${bIco(r.con)}${r.con}</span></div><div class="r-prod">${IC.file}${r.prod}</div><div class="r-txt">${r.txt}</div></div>`).join("");body=rcs+`<button class="re-btn" id="reBtn">${IC.refresh}重新核保</button>`;}
+  }
+  const aiBar=detTab==="conditions"?'<div class="ai-bottom-bar"><button class="ai-interpret-btn" id="aiInterpBtn"><span class="ai-btn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.09 6.26L20 9.27l-5 3.64L16.18 20 12 16.77 7.82 20 9 12.91l-5-3.64 5.91-1.01z"/></svg></span><span class="ai-btn-txt"><span class="t1">AI智能解读</span><span class="t2">基于病历资料，智能分析病史风险</span></span><svg class="ai-btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button></div>':"";
+  return`<div class="page active" style="display:flex"><div class="dtl-hdr"><button class="bk" id="bkBtn">${IC.chevL}</button><h2>档案详情</h2></div><div class="user-banner"><div class="av lg ${avC(a.name)}">${a.name[0]}</div><div><div class="uname">${a.name}</div><div class="umeta">${a.gender} · ${a.age}岁 · ${a.phone}</div><div class="utime">建档时间：${a.createdAt}</div></div></div><div class="dtl-tabs">${th}</div><div class="dtl-body">${body}</div>${aiBar}</div>`;
+}
+function bDetail(){
+  document.getElementById("bkBtn")?.addEventListener("click",()=>{detId=null;render()});
+  document.querySelectorAll(".dtl-tabs button").forEach(b=>b.addEventListener("click",()=>{detTab=b.dataset.t;render()}));
+  document.querySelectorAll(".img-item").forEach(it=>it.addEventListener("click",()=>{const m=document.getElementById("imgModal");document.getElementById("imgModalImg").src=it.dataset.s;m.classList.add("show")}));
+  document.getElementById("reBtn")?.addEventListener("click",()=>{const a=DATA.find(x=>x.id===detId);if(a)openRe(a)});
+  document.getElementById("aiInterpBtn")?.addEventListener("click",()=>{const a=DATA.find(x=>x.id===detId);if(!a)return;aiPatient=a;aiLoading=true;aiResult=null;page="aiInterpret";render()});
+  const imgUp=document.getElementById("imgUpload");
+  if(imgUp)imgUp.addEventListener("change",e=>{
+    const files=Array.from(e.target.files);if(!files.length)return;
+    const a=DATA.find(x=>x.id===detId);if(!a)return;
+    const today=new Date();const dk=today.getFullYear()+"-"+String(today.getMonth()+1).padStart(2,"0")+"-"+String(today.getDate()).padStart(2,"0");
+    if(!a.imgs[dk])a.imgs[dk]=[];
+    files.forEach(f=>{const url=URL.createObjectURL(f);a.imgs[dk].push(url)});
+    render();
+  });
+}
+
+// -- Underwriting --
+function rUW(){
+  let all=[];DATA.forEach(a=>a.recs.forEach(r=>all.push({...r,uid:a.id,un:a.name,ua:a.age,ug:a.gender})));all.sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const st={ok:all.filter(r=>r.con==="标体").length,no:all.filter(r=>r.con==="拒保").length,wt:all.filter(r=>r.con==="延期").length,ex:all.filter(r=>r.con==="除外").length};
+  let fl=all;if(uSearch.trim())fl=fl.filter(r=>r.un.includes(uSearch.trim()));if(uFilter!=="全部")fl=fl.filter(r=>r.con===uFilter);
+  const fs=["全部","标体","拒保","延期","除外"];
+  const cs=fl.length===0?`<div class="empty">${IC.emptyClip}<p>未找到匹配的核保记录</p></div>`:fl.map(r=>`<div class="a-card" data-uid="${r.uid}"><div class="av ${avC(r.un)}">${r.un[0]}</div><div class="c-info"><div class="c-top"><span class="c-name">${r.un}</span><span class="badge ${bCls(r.con)}">${bIco(r.con)}${r.con}</span></div><div class="c-meta">${r.ug} · ${r.ua}岁 · ${r.prod}</div><div class="c-detail">${r.txt}</div><div class="c-time">${IC.clock}${r.date}</div></div></div>`).join("");
+  return`<div class="page active" style="display:flex"><div class="gh"><h2>核保记录</h2><div class="sub">历史核保结论查询</div></div><div class="stats-row"><div class="st"><div class="n" style="color:var(--green)">${st.ok}</div><div class="l">标体</div></div><div class="st"><div class="n" style="color:#FF4D4F">${st.no}</div><div class="l">拒保</div></div><div class="st"><div class="n" style="color:#FA8C16">${st.wt}</div><div class="l">延期</div></div><div class="st"><div class="n" style="color:#1890FF">${st.ex}</div><div class="l">除外</div></div></div><div class="search-wrap"><div class="search-box">${IC.search}<input id="uSI" placeholder="搜索客户姓名..." value="${ea(uSearch)}"/></div><div class="filter-row">${fs.map(f=>`<button class="fbtn ${uFilter===f?"on":""}" data-f="${f}">${f}</button>`).join("")}</div></div><div class="list-area">${cs}</div></div>`;
+}
+function bUW(){
+  document.getElementById("uSI")?.addEventListener("input",e=>{uSearch=e.target.value;render()});
+  document.querySelectorAll(".fbtn").forEach(b=>b.addEventListener("click",()=>{uFilter=b.dataset.f;render()}));
+  document.querySelectorAll(".a-card[data-uid]").forEach(c=>c.addEventListener("click",()=>{detId=+c.dataset.uid;detTab="info";render()}));
+}
+
+// -- Profile --
+function rProfile(){
+  const ac=DATA.length,uc=new Set(DATA.filter(a=>a.recs.length>0).map(a=>a.id)).size;
+  const items=[
+    {ico:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5B8FF9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 15 11 17 15 13"/></svg>',bg:"#E8F0FE",t:"积分商城",d:"天天领积分",nav:"mall"},
+    {ico:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1890FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',bg:"#E6F7FF",t:"客户管理",d:"管理客户信息",nav:""},
+    {ico:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5B8FF9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',bg:"#F0E8FE",t:"关于英仕",d:"了解英仕健康",nav:"about"},
+  ];
+  return`<div class="page active" style="display:flex"><div class="prof-top"><button class="prof-edit-btn" id="profEditBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>完善资料</button><div class="prof-user"><div class="p-av">${ME.av}</div><div><div class="p-name">${ME.name}</div><div class="p-phone">${IC.phone} ${ME.phone}</div><span class="p-role">${ME.company?ME.company:''}${ME.agentId?'<span style="margin-left:8px;padding:1px 8px;background:var(--green-light);color:var(--green);border-radius:6px;font-size:11px">编号 '+ME.agentId+'</span>':ME.role?'':' '}</span>${ME.role&&!ME.company?'<span class="p-role">'+ME.role+'</span>':''}</div></div><div class="prof-stats"><div class="ps"><div class="pn">${ac}</div><div class="pl">客户健康档案</div></div><div class="ps"><div class="pn">${uc}</div><div class="pl">核保用户数</div></div></div></div><div class="prof-menu"><div class="wallet-entry" id="walletEntry"><div class="wp-top"><div class="wp-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><div class="wp-info"><div class="wp-label">账户余额(元)</div><div class="wp-balance">${walletBalance.toFixed(2)}</div></div><div class="wp-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div></div><div class="wp-bottom"><div class="wp-action" id="wpRecharge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>充值</div><div class="wp-action" id="wpWithdraw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>提现</div></div></div>${items.map(i=>`<div class="m-item"${i.nav?' data-nav="'+i.nav+'"':''}><div class="m-ico" style="background:${i.bg}">${i.ico}</div><div class="m-txt"><div class="mt">${i.t}</div><div class="md">${i.d}</div></div><span class="chev-r">${IC.chevR}</span></div>`).join("")}<div class="toolbox-section"><div class="toolbox-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>常用工具箱</div><div class="toolbox-grid"><div class="tool-item" data-nav="riskQuery"><div class="ti-ico" style="background:linear-gradient(135deg,#FFF0F0,#FFE0E0)"><svg viewBox="0 0 24 24" fill="none" stroke="#FF4D4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><span class="ti-label">风控查询</span></div></div></div></div><div class="ver-info"><p>智能小英 v1.0.0</p><p style="margin-top:4px">AI驱动的医疗核保助手</p></div></div></div>`;
+}
+function bProfile(){
+  document.querySelectorAll("[data-nav]").forEach(el=>el.addEventListener("click",()=>{page=el.dataset.nav;render()}));
+  document.getElementById("profEditBtn")?.addEventListener("click",()=>{page="profileEdit";render()});
+  document.getElementById("walletEntry")?.addEventListener("click",()=>{page="wallet";render()});
+  document.getElementById("wpRecharge")?.addEventListener("click",(e)=>{e.stopPropagation();page="wallet";walletAction="recharge";render()});
+  document.getElementById("wpWithdraw")?.addEventListener("click",(e)=>{e.stopPropagation();page="wallet";walletAction="withdraw";render()});
+}
+
+// -- Wallet --
+function rWallet(){
+  const txnHtml=walletTxns.length?walletTxns.map(tx=>{
+    const isIn=tx.type==="in";
+    const icoSvg=isIn?'<svg viewBox="0 0 24 24" fill="none" stroke="#52C41A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 13 12 8 17 13"/><line x1="12" y1="8" x2="12" y2="20"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="#FF4D4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 11 12 16 17 11"/><line x1="12" y1="16" x2="12" y2="4"/></svg>';
+    return`<div class="wb-txn"><div class="wb-txn-ico ${tx.type}">${icoSvg}</div><div class="wb-txn-info"><div class="wb-txn-note">${eh(tx.note)}</div><div class="wb-txn-time">${tx.time}</div></div><div class="wb-txn-amt ${tx.type}">${isIn?'+':'-'}${tx.amt.toFixed(2)}</div></div>`;
+  }).join(""):'<div class="wallet-empty">暂无交易记录</div>';
+  return`<div class="page active" style="display:flex"><div class="wallet-page"><div class="wallet-hdr"><div class="wh-nav"><button class="bk" id="walletBack">${IC.chevL}</button><h2>我的钱包</h2></div><div class="wh-balance"><div class="wb-label">账户余额(元)</div><div class="wb-amount">${walletBalance.toFixed(2)}<span class="wb-unit">元</span></div></div><div class="wh-actions"><button class="wh-btn recharge" id="walletRecharge">充值</button><button class="wh-btn withdraw" id="walletWithdraw">提现</button></div></div><div class="wallet-body"><div class="wb-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>交易记录</div><div class="wb-txn-list">${txnHtml}</div></div></div></div>`;
+}
+function bWallet(){
+  document.getElementById("walletBack")?.addEventListener("click",()=>{page="profile";walletAction="";render()});
+  document.getElementById("walletRecharge")?.addEventListener("click",()=>{showWalletModal("recharge")});
+  document.getElementById("walletWithdraw")?.addEventListener("click",()=>{showWalletModal("withdraw")});
+  if(walletAction==="recharge"){setTimeout(()=>showWalletModal("recharge"),100);walletAction="";}
+  if(walletAction==="withdraw"){setTimeout(()=>showWalletModal("withdraw"),100);walletAction="";}
+}
+function showWalletModal(type){
+  const isIn=type==="recharge";
+  const title=isIn?"充值":"提现";
+  const overlay=document.createElement("div");
+  overlay.id="walletModal";
+  overlay.style.cssText="position:absolute;inset:0;background:rgba(0,0,0,.4);z-index:100;display:flex;align-items:flex-end;justify-content:center;border-radius:44px;overflow:hidden";
+  overlay.innerHTML=`<div style="width:100%;background:#fff;border-radius:20px 20px 0 0;padding:24px 20px 32px;animation:slideUp .3s ease">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <span style="font-size:16px;font-weight:700;color:var(--text-primary)">${title}</span>
+      <button id="wmClose" style="width:28px;height:28px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    ${!isIn?`<div style="text-align:center;margin-bottom:16px;font-size:12px;color:var(--text-tertiary)">可提现余额：<span style="color:var(--green);font-weight:600">${walletBalance.toFixed(2)}</span> 元</div>`:""}
+    <div style="display:flex;align-items:baseline;justify-content:center;margin-bottom:20px;gap:2px">
+      <span style="font-size:20px;font-weight:700;color:var(--text-primary)">¥</span>
+      <input id="wmAmount" type="number" inputmode="decimal" placeholder="0.00" style="border:none;border-bottom:2px solid var(--green);font-size:36px;font-weight:800;text-align:center;width:160px;outline:none;color:var(--text-primary);background:transparent;padding:4px 0;font-family:inherit"/>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:20px;justify-content:center">
+      ${isIn?[100,500,1000,2000].map(v=>`<button class="wm-preset" data-amt="${v}" style="padding:8px 16px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:13px;color:var(--text-primary);cursor:pointer;font-family:inherit;transition:all .2s">${v}元</button>`).join(""):[100,200,500].map(v=>`<button class="wm-preset" data-amt="${v}"${v>walletBalance?' disabled':''} style="padding:8px 16px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:13px;color:var(--text-primary);cursor:pointer;font-family:inherit;transition:all .2s${v>walletBalance?';opacity:.4;cursor:not-allowed':''}">${v}元</button>`).join("")}
+    </div>
+    <button id="wmConfirm" style="width:100%;padding:13px;border-radius:24px;font-size:15px;font-weight:600;border:none;background:var(--green-grad);color:#fff;cursor:pointer;box-shadow:0 4px 16px rgba(91,143,249,.25);font-family:inherit">${isIn?"确认充值":"确认提现"}</button>
+  </div>`;
+  const phone=document.querySelector(".phone");
+  phone.appendChild(overlay);
+  const close=()=>{overlay.remove()};
+  overlay.querySelector("#wmClose").addEventListener("click",close);
+  overlay.addEventListener("click",(e)=>{if(e.target===overlay)close()});
+  overlay.querySelectorAll(".wm-preset").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      if(btn.disabled)return;
+      overlay.querySelector("#wmAmount").value=btn.dataset.amt;
+      overlay.querySelectorAll(".wm-preset").forEach(b=>{b.style.borderColor="var(--border)";b.style.background="var(--bg)";b.style.color="var(--text-primary)"});
+      btn.style.borderColor="var(--green)";btn.style.background="var(--green-light)";btn.style.color="var(--green-dark)";
+    });
+  });
+  overlay.querySelector("#wmConfirm").addEventListener("click",()=>{
+    const amt=parseFloat(overlay.querySelector("#wmAmount").value);
+    if(!amt||amt<=0){overlay.querySelector("#wmAmount").style.borderBottomColor="#FF4D4F";return;}
+    if(!isIn&&amt>walletBalance){overlay.querySelector("#wmAmount").style.borderBottomColor="#FF4D4F";return;}
+    const now=new Date();const tStr=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0")+" "+String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");
+    if(isIn){walletBalance+=amt;walletTxns.unshift({type:"in",amt:amt,note:"充值",time:tStr});}
+    else{walletBalance-=amt;walletTxns.unshift({type:"out",amt:amt,note:"提现",time:tStr});}
+    close();
+    page="wallet";render();
+  });
+}
+
+// -- Profile Edit --
+const PE_EDIT_ICO='<svg class="pe-edit-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
+function peField(key,label,val,readonly){
+  const display=val?eh(val):'<span style="color:var(--text-tertiary)">点击填写</span>';
+  const cls=val?'pe-value':'pe-value pe-empty';
+  if(readonly)return`<div class="pe-field"><span class="pe-label">${label}</span><span class="pe-value" style="cursor:default">${eh(val)}</span></div>`;
+  return`<div class="pe-field" data-key="${key}"><span class="pe-label">${label}</span><span class="${cls}" data-key="${key}">${display}${PE_EDIT_ICO}</span></div>`;
+}
+function rProfileEdit(){
+  return`<div class="page active" style="display:flex;flex-direction:column">
+    <div class="prof-edit-hdr">
+      <button class="bk" id="peBack">${IC.chevL}</button>
+      <h2>完善资料</h2>
+    </div>
+    <div class="prof-edit-body">
+      <div class="prof-edit-card">
+        <div class="pe-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>个人信息</div>
+        ${peField('phone','登录手机号',ME.phone,true)}
+        ${peField('name','姓名',ME.name)}
+        <div class="pe-field">
+          <span class="pe-label">性别</span>
+          <div class="pe-gender">
+            <input type="radio" name="peGender" id="genderM" value="男" ${ME.gender==='男'?'checked':''}/>
+            <label for="genderM">男</label>
+            <input type="radio" name="peGender" id="genderF" value="女" ${ME.gender==='女'?'checked':''}/>
+            <label for="genderF">女</label>
+          </div>
+        </div>
+        ${peField('contactPhone','联系电话',ME.contactPhone)}
+        ${peField('email','联系邮箱',ME.email)}
+        ${peField('company','经纪公司',ME.company)}
+        ${peField('agentId','经纪人编号',ME.agentId)}
+      </div>
+      <div style="text-align:center;padding:20px 0 8px;font-size:11px;color:var(--text-tertiary)">点击字段即可修改</div>
+    </div>
+  </div>`;
+}
+function bProfileEdit(){
+  document.getElementById("peBack")?.addEventListener("click",()=>{page="profile";render()});
+  // Gender change saves immediately
+  document.querySelectorAll('input[name="peGender"]').forEach(r=>r.addEventListener("change",()=>{ME.gender=r.value}));
+  // Click-to-edit for all editable fields
+  document.querySelectorAll(".pe-value").forEach(el=>{
+    el.addEventListener("click",()=>{
+      const key=el.dataset.key;
+      if(!key||el.querySelector("input"))return;
+      const current=ME[key]||"";
+      const inp=document.createElement("input");
+      inp.className="pe-inline";
+      inp.type=key==="email"?"email":key==="contactPhone"||key==="phone"?"tel":"text";
+      inp.value=current;
+      inp.placeholder="请输入"+el.closest(".pe-field").querySelector(".pe-label").textContent;
+      el.replaceWith(inp);
+      inp.focus();
+      inp.select();
+      const save=()=>{
+        const v=inp.value.trim();
+        ME[key]=v;
+        if(key==="name"&&v)ME.av=v.charAt(0);
+        page="profileEdit";render();
+      };
+      inp.addEventListener("blur",save);
+      inp.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();inp.removeEventListener("blur",save);save()}});
+    });
+  });
+}
+
+// -- Risk Query --
+let riskResult=null;
+function rRiskQuery(){
+  const resultHtml=riskResult?`
+    <div class="risk-result slide-up">
+      <div class="rr-card">
+        <div class="rr-status">
+          <div class="rr-icon" style="background:${riskResult.level==='低风险'?'#E8F0FE':riskResult.level==='中风险'?'#FFF7E6':'#FFF0F0'}">${riskResult.level==='低风险'?'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5B8FF9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>':riskResult.level==='中风险'?'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FA8C16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>':'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF4D4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>'}</div>
+          <div><div class="rr-text">${riskResult.name} - 风控评估结果：${riskResult.level}</div><div class="rr-sub">查询时间：${riskResult.time}</div></div>
+        </div>
+        <div class="rr-detail">
+          <div class="rr-row"><span class="rr-l">被保人姓名</span><span class="rr-v">${riskResult.name}</span></div>
+          <div class="rr-row"><span class="rr-l">身份证号</span><span class="rr-v">${riskResult.idCard}</span></div>
+          <div class="rr-row"><span class="rr-l">风险等级</span><span class="rr-v" style="color:${riskResult.level==='低风险'?'#5B8FF9':riskResult.level==='中风险'?'#FA8C16':'#FF4D4F'}">${riskResult.level}</span></div>
+          <div class="rr-row"><span class="rr-l">风险评分</span><span class="rr-v">${riskResult.score}分</span></div>
+          <div class="rr-row"><span class="rr-l">查询次数</span><span class="rr-v">${riskResult.queryCount}次</span></div>
+          <div class="rr-row"><span class="rr-l">最近查询</span><span class="rr-v">${riskResult.lastQuery}</span></div>
+        </div>
+        <div class="rr-note">* 以上结果由AI风控系统生成，仅供参考</div>
+      </div>
+    </div>`:'';
+  return`<div class="page active" style="display:flex;flex-direction:column">
+    <div class="risk-hdr">
+      <button class="bk" id="riskBack">${IC.chevL}</button>
+      <h2>风控查询</h2>
+    </div>
+    <div class="risk-body">
+      <div class="risk-card">
+        <div class="rc-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>被保人信息查询</div>
+        <div class="risk-field">
+          <label class="rf-label">被保人姓名</label>
+          <input class="rf-input" id="riskName" type="text" placeholder="请输入被保人姓名" value="${ea(riskResult?riskResult.name:'')}"/>
+        </div>
+        <div class="risk-field">
+          <label class="rf-label">被保人身份证号</label>
+          <input class="rf-input" id="riskIdCard" type="text" placeholder="请输入被保人身份证号" value="${ea(riskResult?riskResult.idCard:'')}" maxlength="18"/>
+        </div>
+        <button class="risk-query-btn" id="riskQueryBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>开始查询</button>
+      </div>
+      ${resultHtml}
+    </div>
+  </div>`;
+}
+function bRiskQuery(){
+  document.getElementById("riskBack")?.addEventListener("click",()=>{page="profile";riskResult=null;render()});
+  document.getElementById("riskQueryBtn")?.addEventListener("click",()=>{
+    const name=document.getElementById("riskName").value.trim();
+    const idCard=document.getElementById("riskIdCard").value.trim();
+    if(!name){alert("请输入被保人姓名");return;}
+    if(!idCard){alert("请输入被保人身份证号");return;}
+    if(idCard.length!==18||!/^\d{17}[\dXx]$/.test(idCard)){alert("请输入有效的18位身份证号");return;}
+    const btn=document.getElementById("riskQueryBtn");
+    btn.innerHTML='<div class="spinner" style="width:18px;height:18px;border-width:2px;margin:0;display:inline-block;vertical-align:middle"></div> 查询中...';
+    btn.disabled=true;
+    setTimeout(()=>{
+      const levels=["低风险","中风险","高风险"];
+      const level=levels[Math.floor(Math.random()*3)];
+      const score=level==="低风险"?Math.floor(Math.random()*20)+80:level==="中风险"?Math.floor(Math.random()*20)+50:Math.floor(Math.random()*30)+10;
+      const now=new Date();
+      const timeStr=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0")+" "+String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");
+      riskResult={name:name,idCard:idCard.replace(/(\d{6})(\d{8})(\d{4})/,'$1********$3'),level:level,score:score,time:timeStr,queryCount:Math.floor(Math.random()*5)+1,lastQuery:timeStr};
+      render();
+    },1500);
+  });
+}
+
+// -- About Inscare --
+let aboutAgreementModal=null;
+const ABOUT_INTRO="英仕健康与国内主流保险公司深度合作，致力于为会员提供个性化的健康管理与保险保障方案。我们通过提升会员参与度，帮助大家在需要时更高效地对接医疗服务。「专属健康伙伴」服务模式，如同您身边的家庭医生，全程陪伴健康咨询与保障规划。线上会员中心便于您随时查看权益、办理服务。同时，我们链接公立与私立医疗机构资源网络，让优质医疗资源更可及。英仕健康始终坚持以人为本，让保险服务更简单、更有温度。";
+const AGREEMENTS={
+  register:`<div style="font-size:14px;font-weight:700;color:#1A1A1A;margin-bottom:16px;text-align:center">用户注册协议</div>
+<div style="font-size:12px;color:#666;line-height:2">
+<p style="margin-bottom:12px"><strong>更新日期：2026年1月1日</strong></p>
+<p style="margin-bottom:12px">欢迎使用英仕健康服务平台（以下简称"本平台"）。在您注册成为本平台用户之前，请您仔细阅读本注册协议的全部条款。</p>
+<p style="margin-bottom:8px"><strong>一、账户注册</strong></p>
+<p style="margin-bottom:12px">1. 您应当使用真实、准确、完整的个人信息进行注册，并在信息发生变更时及时更新。<br/>2. 您应对账户安全负责，不得将账户提供给他人使用。<br/>3. 如发现账户被未经授权使用，请立即通知我们。</p>
+<p style="margin-bottom:8px"><strong>二、服务说明</strong></p>
+<p style="margin-bottom:12px">1. 本平台提供健康管理咨询与保险保障相关服务。<br/>2. 平台提供的AI核保建议仅供参考，最终核保结论以保险公司人工审核为准。<br/>3. 我们保留根据业务需要调整服务内容的权利。</p>
+<p style="margin-bottom:8px"><strong>三、用户义务</strong></p>
+<p style="margin-bottom:12px">1. 遵守国家法律法规，不利用本平台从事违法活动。<br/>2. 提供真实、准确的健康信息用于核保评估。<br/>3. 不得干扰或破坏本平台的正常运行。</p>
+<p style="margin-bottom:8px"><strong>四、知识产权</strong></p>
+<p style="margin-bottom:12px">本平台所有内容（包括但不限于文字、图片、软件、界面设计）的知识产权归英仕健康所有，未经授权不得复制、修改或用于商业用途。</p>
+<p style="margin-bottom:8px"><strong>五、免责声明</strong></p>
+<p style="margin-bottom:12px">1. 因不可抗力导致的服务中断，本平台不承担责任。<br/>2. AI辅助建议不构成医疗诊断，具体诊疗请咨询专业医生。</p>
+</div>`,
+  privacy:`<div style="font-size:14px;font-weight:700;color:#1A1A1A;margin-bottom:16px;text-align:center">用户隐私协议</div>
+<div style="font-size:12px;color:#666;line-height:2">
+<p style="margin-bottom:12px"><strong>更新日期：2026年1月1日</strong></p>
+<p style="margin-bottom:12px">英仕健康（以下简称"我们"）非常重视您的隐私保护。本隐私协议说明了我们如何收集、使用和保护您的个人信息。</p>
+<p style="margin-bottom:8px"><strong>一、信息收集</strong></p>
+<p style="margin-bottom:12px">我们可能收集以下信息：<br/>1. 注册信息：姓名、手机号码、电子邮箱等。<br/>2. 健康信息：您主动提供的健康状况、病历资料等。<br/>3. 使用数据：浏览记录、操作日志、设备信息等。</p>
+<p style="margin-bottom:8px"><strong>二、信息使用</strong></p>
+<p style="margin-bottom:12px">我们收集的信息用于：<br/>1. 提供和改进平台服务。<br/>2. 进行健康风险评估与保险核保辅助。<br/>3. 向您推送相关的健康管理建议和产品资讯。<br/>4. 保障平台安全与合规运营。</p>
+<p style="margin-bottom:8px"><strong>三、信息保护</strong></p>
+<p style="margin-bottom:12px">1. 我们采用业界标准的安全技术措施保护您的个人信息。<br/>2. 未经您的同意，不会向第三方披露您的个人信息（法律法规要求除外）。<br/>3. 您的健康数据在传输和存储过程中均进行加密处理。</p>
+<p style="margin-bottom:8px"><strong>四、信息共享</strong></p>
+<p style="margin-bottom:12px">仅在以下情况下可能共享您的信息：<br/>1. 经您明确授权同意。<br/>2. 与合作保险公司进行核保评估（仅限必要信息）。<br/>3. 法律法规要求或政府部门依法调取。</p>
+<p style="margin-bottom:8px"><strong>五、您的权利</strong></p>
+<p style="margin-bottom:12px">您有权查看、修改、删除您的个人信息，也有权撤回此前给出的授权同意。如需行使上述权利，请通过平台内的客服渠道联系我们。</p>
+</div>`
+};
+function rAbout(){
+  return`<div class="page active" style="display:flex;flex-direction:column">
+    <div class="about-hdr">
+      <div class="ah-top">
+        <button class="bk" id="aboutBack">${IC.chevL}</button>
+        <span>关于英仕</span>
+      </div>
+      <div class="ah-brand">
+        <div class="ah-logo">iY</div>
+        <div class="ah-info">
+          <div class="ah-name">英仕健康</div>
+          <div class="ah-slogan">以人为本 · 让保险更有温度</div>
+        </div>
+      </div>
+    </div>
+    <div class="about-body">
+      <div class="about-card">
+        <div class="ac-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>平台介绍</div>
+        <div class="ac-text">${ABOUT_INTRO}</div>
+      </div>
+      <div class="about-card">
+        <div class="ac-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>协议与条款</div>
+        <div class="about-links">
+          <div class="about-link" data-agr="register">
+            <div class="al-ico" style="background:#E8F0FE"><svg viewBox="0 0 24 24" fill="none" stroke="#5B8FF9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+            <span class="al-txt">用户注册协议</span>
+            <span class="al-arrow">${IC.chevR}</span>
+          </div>
+          <div class="about-link" data-agr="privacy">
+            <div class="al-ico" style="background:#E6F7FF"><svg viewBox="0 0 24 24" fill="none" stroke="#1890FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+            <span class="al-txt">用户隐私协议</span>
+            <span class="al-arrow">${IC.chevR}</span>
+          </div>
+        </div>
+      </div>
+      <div class="about-ver">
+        <p>英仕健康 v1.0.0</p>
+        <p style="margin-top:4px">© 2026 Inscare Health. All rights reserved.</p>
+      </div>
+    </div>
+  </div>`;
+}
+function bAbout(){
+  document.getElementById("aboutBack")?.addEventListener("click",()=>{page="profile";render()});
+  document.querySelectorAll("[data-agr]").forEach(el=>el.addEventListener("click",()=>{
+    const type=el.dataset.agr;
+    const m=document.getElementById("agrModal");
+    document.getElementById("agrBody").innerHTML=AGREEMENTS[type];
+    m.classList.add("show");
+  }));
+}
+
+// -- Points Mall --
+let mallFilter="全部";
+function rMall(){
+  const prods=MALL_PRODUCTS.slice(0,mallCount).filter(p=>mallFilter==="全部"||p.type===mallFilter);
+  const moreBtn=mallCount<MALL_PRODUCTS.length?`<button class="load-more-btn" id="loadMoreMall">点击加载更多</button>`:`<div style="text-align:center;padding:16px 0 8px;font-size:11px;color:#ccc">— 已经到底了 —</div>`;
+  const tabs=["全部","虚拟","实物"];
+  const streakDays=[1,2,3,4,5,6,7].map(d=>{
+    const isToday=d===(checkinStreak+(checkinToday?1:0));
+    const isActive=d<=checkinStreak;
+    const isBonus=d===7;
+    let cls="pts-day";
+    if(isActive)cls+=" active";
+    if(isToday&&!checkinToday)cls+=" today";
+    if(isBonus)cls+=" bonus";
+    return`<div class="${cls}"><span class="day-num">D${d}</span><span class="day-pts">${isBonus?'+110':'+10'}</span></div>`;
+  }).join("");
+  const tasks=[
+    {id:"checkin",ico:'<svg viewBox="0 0 24 24" fill="none" stroke="#52C41A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',bg:"#E8F8E8",name:"每日签到",desc:"连续签到7天额外赠送100积分",pts:10,done:checkinToday},
+    {id:"browse",ico:'<svg viewBox="0 0 24 24" fill="none" stroke="#1890FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',bg:"#E6F7FF",name:"浏览平安人生产品",desc:"浏览产品详情即可获得积分",pts:10,done:tasksDone.browse},
+    {id:"chat",ico:'<svg viewBox="0 0 24 24" fill="none" stroke="#5B8FF9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',bg:"#E8F0FE",name:"使用智能小英问答",desc:"进行一次有效问答获得积分",pts:10,done:tasksDone.chat},
+    {id:"video",ico:'<svg viewBox="0 0 24 24" fill="none" stroke="#FA8C16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>',bg:"#FFF7E6",name:"浏览付费视频",desc:"观看任意付费视频获得积分",pts:10,done:tasksDone.video}
+  ];
+  const taskHtml=tasks.map(t=>`<div class="pts-task"><div class="pts-task-ico" style="background:${t.bg}">${t.ico}</div><div class="pts-task-info"><div class="pts-task-name">${t.name}</div><div class="pts-task-desc">${t.desc}</div></div><button class="pts-task-btn ${t.done?'done':'go'}" data-task="${t.id}">${t.done?'已完成':'+'+t.pts+'积分'}</button></div>`).join("");
+  return`<div class="page active" style="display:flex;flex-direction:column">
+    <div class="mall-header">
+      <div class="mh-top">
+        <button class="back-btn" id="mallBack">${IC.chevL}</button>
+        <span class="mh-title">积分商城</span>
+      </div>
+      <div class="mall-points">
+        <div class="mp-label">我的可用积分</div>
+        <div class="mp-value">${userPoints.toLocaleString()}</div>
+      </div>
+    </div>
+    <div class="mall-scroll">
+      <div class="pts-section">
+        <div class="pts-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>赚积分</div>
+        <div class="pts-streak">${streakDays}</div>
+        ${taskHtml}
+      </div>
+      <div class="mall-tabs" style="margin-top:12px;background:var(--white);border-radius:var(--radius) var(--radius) 0 0">
+        ${tabs.map(t=>`<button class="${mallFilter===t?'on':''}" data-f="${t}">${t}</button>`).join("")}
+      </div>
+      <div class="mall-grid">
+        ${prods.map(p=>`<div class="mall-card" data-pid="${p.id}">
+          <div class="mc-img">${p.img.startsWith("images/")?`<img src="${p.img}" style="width:100%;height:100%;object-fit:cover"/>`:`${p.img}`}</div>
+          <div class="mc-body">
+            <div class="mc-name">${p.name}</div>
+            <div class="mc-desc">${p.desc}</div>
+            <div class="mc-bottom">
+              <div class="mc-points">${p.points.toLocaleString()}<span> 积分</span></div>
+              <div class="mc-tag">${p.type}</div>
+            </div>
+          </div>
+        </div>`).join("")}
+      </div>
+      ${moreBtn}
+    </div>
+  </div>`;
+}
+function showPointsToast(txt){
+  const toast=document.createElement("div");
+  toast.className="pts-toast";
+  toast.textContent=txt;
+  document.querySelector(".phone").appendChild(toast);
+  requestAnimationFrame(()=>{toast.classList.add("show")});
+  setTimeout(()=>{toast.classList.remove("show");setTimeout(()=>toast.remove(),300)},1500);
+}
+function doCheckin(){
+  if(checkinToday)return;
+  checkinToday=true;
+  let pts=10;
+  checkinStreak++;
+  if(checkinStreak>=7){pts+=100;checkinStreak=0;}
+  userPoints+=pts;
+  showPointsToast("签到成功 +"+pts+"积分");
+  setTimeout(()=>{page="mall";render()},200);
+}
+function doTask(taskId){
+  if(taskId==="checkin"){doCheckin();return;}
+  if(tasksDone[taskId])return;
+  tasksDone[taskId]=true;
+  userPoints+=10;
+  const names={browse:"浏览产品",chat:"问答互动",video:"浏览视频"};
+  showPointsToast((names[taskId]||"任务")+"完成 +10积分");
+  if(taskId==="browse"){page="chat";msgs.push({r:"u",c:"我想了解平安人生产品的详细信息",t:ts()});render();setTimeout(()=>{msgs.push({r:"a",c:"好的，为您介绍「平安人生」系列产品：\n\n1. 平安人生·免健告版 — 无需健康告知，投保极简\n2. 平安人生·易保版 — 简化核保流程，快速配置\n3. 平安人生·标准版 — 标准保障方案，全面覆盖\n\n需要了解哪款产品的详细信息吗？",t:ts()});page="chat";render()},1500);}
+  else if(taskId==="chat"){page="chat";render();}
+  else if(taskId==="video"){page="home";render();}
+  else{page="mall";render();}
+}
+function bMall(){
+  document.getElementById("mallBack")?.addEventListener("click",()=>{page="profile";render()});
+  document.querySelectorAll(".mall-tabs button").forEach(b=>b.addEventListener("click",()=>{mallFilter=b.dataset.f;render()}));
+  document.getElementById("loadMoreMall")?.addEventListener("click",()=>{mallCount=Math.min(mallCount+6,MALL_PRODUCTS.length);render()});
+  document.querySelectorAll(".pts-task-btn.go").forEach(btn=>{
+    btn.addEventListener("click",()=>{doTask(btn.dataset.task)});
+  });
+}
+
+// -- AI Interpret --
+function genAiResult(a){
+  const riskLevels=["低风险","中风险","高风险"];
+  const riskColors={"低风险":"#52C41A","中风险":"#FA8C16","高风险":"#FF4D4F"};
+  const riskBgs={"低风险":"#F0FFF0","中风险":"#FFF7E6","高风险":"#FFF0F0"};
+  let risk,conclusion,diseases,recommendations,followUps;
+  const cond=a.cond.toLowerCase();
+  if(/冠心病|心梗|支架|心脏/.test(cond)){
+    risk="高风险";
+    conclusion="患者存在心血管疾病史，目前术后恢复中。心脏相关疾病对重疾险、寿险影响较大，建议关注心功能指标变化。";
+    diseases=[
+      {name:"冠心病（支架术后）",desc:"PCI术后规律用药中，心功能NYHA I级，LVEF 55%。术后不足2年，核保影响显著。",color:"#FF4D4F"},
+      {name:"高脂血症",desc:"LDL-C 2.8mmol/L，略高于目标值（<2.6），需持续药物控制。",color:"#FA8C16"}
+    ];
+    recommendations=[
+      {text:"重疾险",tag:"拒保",bg:"#FFF0F0",color:"#FF4D4F"},
+      {text:"医疗险",tag:"除外",bg:"#FFF7E6",color:"#FA8C16"},
+      {text:"寿险",tag:"拒保",bg:"#FFF0F0",color:"#FF4D4F"},
+      {text:"免健告产品",tag:"可投",bg:"#F0FFF0",color:"#52C41A"}
+    ];
+    followUps="1. 建议术后满2年后重新评估核保可能性\n2. 定期复查心脏超声及血脂指标\n3. 优先考虑免健告或宽松告知类产品\n4. 保持戒烟，控制心血管危险因素";
+  }else if(/结节|甲状腺|乳腺/.test(cond)){
+    risk="低风险";
+    conclusion="患者结节类疾病，目前分级较低（BI-RADS/TI-RADS 2-3类），恶性风险低。多数产品可标准体或除外承保。";
+    diseases=[
+      {name:a.pre,desc:"分级较低，考虑良性可能大，定期复查即可。无明显核保影响。",color:"#52C41A"}
+    ];
+    recommendations=[
+      {text:"重疾险",tag:"标体",bg:"#F0FFF0",color:"#52C41A"},
+      {text:"医疗险",tag:"除外",bg:"#FFF7E6",color:"#FA8C16"},
+      {text:"寿险",tag:"标体",bg:"#F0FFF0",color:"#52C41A"},
+      {text:"免健告产品",tag:"可投",bg:"#F0FFF0",color:"#52C41A"}
+    ];
+    followUps="1. 建议6-12个月后复查超声，关注结节大小变化\n2. 如分级升至4类及以上，需重新评估\n3. 保存好历次检查报告便于投保时提供";
+  }else if(/乙肝|肝|脂肪肝/.test(cond)){
+    risk="中风险";
+    conclusion="患者存在肝脏相关疾病，肝功能指标存在异常。肝脏疾病对医疗险影响较大，重疾险视具体指标而定。";
+    diseases=[
+      {name:a.pre.split("、")[0]||a.pre,desc:"病毒活跃复制中，需关注肝功能及病毒载量变化。对肝脏相关责任影响显著。",color:"#FA8C16"},
+      {name:a.pre.split("、")[1]||"肝功能异常",desc:"转氨酶轻度升高，提示肝脏存在炎症活动。",color:"#FA8C16"}
+    ];
+    recommendations=[
+      {text:"重疾险",tag:"加费",bg:"#FFF7E6",color:"#FA8C16"},
+      {text:"医疗险",tag:"除外",bg:"#FFF7E6",color:"#FA8C16"},
+      {text:"寿险",tag:"标体",bg:"#F0FFF0",color:"#52C41A"},
+      {text:"免健告产品",tag:"可投",bg:"#F0FFF0",color:"#52C41A"}
+    ];
+    followUps="1. 建议启动抗病毒治疗后重新评估\n2. 定期监测肝功能、HBV-DNA及腹部超声\n3. 肝功能恢复正常后核保结论可能改善\n4. 优先尝试除外承保或免健告产品";
+  }else if(/肌瘤|子宫/.test(cond)){
+    risk="低风险";
+    conclusion="患者子宫肌瘤体积较小，无贫血症状，对多数险种影响较小。定期复查即可。";
+    diseases=[
+      {name:"子宫肌瘤",desc:"肌瘤<5cm，位于肌壁间，血红蛋白正常无贫血。核保影响轻微。",color:"#52C41A"}
+    ];
+    recommendations=[
+      {text:"重疾险",tag:"标体",bg:"#F0FFF0",color:"#52C41A"},
+      {text:"医疗险",tag:"除外",bg:"#FFF7E6",color:"#FA8C16"},
+      {text:"寿险",tag:"标体",bg:"#F0FFF0",color:"#52C41A"},
+      {text:"免健告产品",tag:"可投",bg:"#F0FFF0",color:"#52C41A"}
+    ];
+    followUps="1. 建议每6-12个月复查妇科超声\n2. 关注月经量及血红蛋白变化\n3. 如肌瘤增大超过5cm需重新评估";
+  }else{
+    risk="中风险";
+    conclusion="根据患者提供的病历资料，综合评估健康风险为中等水平。建议结合具体检查指标进一步分析。";
+    diseases=[
+      {name:a.pre,desc:a.cond.substring(0,60)+"...",color:"#FA8C16"}
+    ];
+    recommendations=[
+      {text:"重疾险",tag:"待评估",bg:"#F0F0F0",color:"#666"},
+      {text:"医疗险",tag:"待评估",bg:"#F0F0F0",color:"#666"},
+      {text:"寿险",tag:"标体",bg:"#F0FFF0",color:"#52C41A"},
+      {text:"免健告产品",tag:"可投",bg:"#F0FFF0",color:"#52C41A"}
+    ];
+    followUps="1. 建议补充完整检查报告后重新评估\n2. 定期随访关注病情变化\n3. 可优先尝试免健告类产品";
+  }
+  return{risk,riskColor:riskColors[risk],riskBg:riskBgs[risk],conclusion,diseases,recommendations,followUps,time:new Date().toLocaleString("zh-CN")};
+}
+function rAiInterpret(){
+  if(!aiPatient)return"";
+  const a=aiPatient;
+  if(aiLoading){
+    return`<div class="ai-page"><div class="ai-hdr"><button class="bk" id="aiBack">${IC.chevL}</button><h2>AI智能解读</h2></div><div class="ai-body"><div class="ai-loading"><div class="pulse-ring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.09 6.26L20 9.27l-5 3.64L16.18 20 12 16.77 7.82 20 9 12.91l-5-3.64 5.91-1.01z"/></svg></div><div class="ld-title">正在解读 ${eh(a.name)} 的病史</div><div class="ld-step" id="aiStep">正在读取病历资料...</div><div class="ai-progress"><div class="bar" id="aiBar" style="width:10%"></div></div></div></div></div>`;
+  }
+  if(!aiResult)return"";
+  const r=aiResult;
+  const diseasesHtml=r.diseases.map(d=>`<div class="ai-disease-item"><div class="di-dot" style="background:${d.color}"></div><div><div class="di-name">${eh(d.name)}</div><div class="di-desc">${eh(d.desc)}</div></div></div>`).join("");
+  const recsHtml=r.recommendations.map(rc=>`<span class="ai-rec-tag" style="background:${rc.bg};color:${rc.color}">${eh(rc.text)} ${eh(rc.tag)}</span>`).join("");
+  const followUpsHtml=r.followUps.split("\n").map(l=>`<p style="margin-bottom:4px">${eh(l)}</p>`).join("");
+  return`<div class="ai-page"><div class="ai-hdr"><button class="bk" id="aiBack">${IC.chevL}</button><h2>AI智能解读</h2></div><div class="ai-body">
+    <div class="ai-result-hdr">
+      <div class="rh-ico" style="background:${r.riskBg}"><svg viewBox="0 0 24 24" fill="none" stroke="${r.riskColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+      <div class="rh-name">${eh(a.name)} 的健康风险评估</div>
+      <div class="rh-meta">${a.gender} · ${a.age}岁 · 解读时间 ${r.time}</div>
+      <div class="ai-risk-badge" style="background:${r.riskBg};color:${r.riskColor}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>${r.risk}</div>
+    </div>
+    <div class="ai-section"><div class="as-title"><svg viewBox="0 0 24 24" fill="none" stroke="#5B8FF9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>综合评估</div><div class="as-body">${eh(r.conclusion)}</div></div>
+    <div class="ai-section"><div class="as-title"><svg viewBox="0 0 24 24" fill="none" stroke="#FA8C16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>疾病风险分析</div>${diseasesHtml}</div>
+    <div class="ai-section"><div class="as-title"><svg viewBox="0 0 24 24" fill="none" stroke="#52C41A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>核保建议</div><div style="display:flex;flex-wrap:wrap;gap:2px">${recsHtml}</div></div>
+    <div class="ai-section"><div class="as-title"><svg viewBox="0 0 24 24" fill="none" stroke="#1890FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>后续建议</div><div class="as-body">${followUpsHtml}</div></div>
+    <div class="ai-disclaimer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>以上内容由AI智能生成，仅供健康管理参考，不构成专业医疗诊断或核保结论。最终核保结果以保险公司人工审核为准。</span></div>
+    <button class="ai-again-btn" id="aiAgainBtn">重新解读</button>
+    <div style="height:20px"></div>
+  </div></div>`;
+}
+function bAiInterpret(){
+  document.getElementById("aiBack")?.addEventListener("click",()=>{aiLoading=false;aiResult=null;aiPatient=null;detTab="conditions";render()});
+  document.getElementById("aiAgainBtn")?.addEventListener("click",()=>{aiResult=null;aiLoading=true;render();startAiLoading()});
+  if(aiLoading)startAiLoading();
+}
+function startAiLoading(){
+  const steps=["正在读取病历资料...","分析既往症病史...","评估疾病风险等级...","匹配核保规则库...","生成解读报告..."];
+  const percents=[10,30,55,78,95];
+  let idx=0;
+  function nextStep(){
+    if(idx>=steps.length)return;
+    const stepEl=document.getElementById("aiStep");
+    const barEl=document.getElementById("aiBar");
+    if(stepEl)stepEl.textContent=steps[idx];
+    if(barEl)barEl.style.width=percents[idx]+"%";
+    idx++;
+    if(idx<steps.length)setTimeout(nextStep,600);
+    else setTimeout(()=>{if(barEl)barEl.style.width="100%";setTimeout(()=>{aiResult=genAiResult(aiPatient);aiLoading=false;render()},400)},500);
+  }
+  setTimeout(nextStep,300);
+}
+
+// ===== Modals =====
+function openRe(a){
+  const m=document.getElementById("reModal");
+  document.getElementById("reModalName").textContent="客户："+a.name;
+  document.getElementById("reModalBody").innerHTML=`<div class="spinner-wrap"><div class="spinner"></div><div class="spinner-txt">智能小英正在分析中...</div><div class="spinner-sub">请稍候</div></div>`;
+  document.getElementById("reModalClose").textContent="取消";
+  m.classList.add("show");
+  setTimeout(()=>{
+    const cs=["标体","除外","延期","拒保"],c=cs[Math.floor(Math.random()*cs.length)];
+    const ds={标体:"综合评估客户健康状况，各项指标稳定，建议标准体承保。",除外:"因客户存在既往疾病史，建议除外相关疾病责任后承保。",延期:"客户近期健康指标波动，建议观察3-6个月后重新评估。",拒保:"客户当前健康风险较高，暂不建议承保。"};
+    const ics={标体:"background:#E8F0FE",拒保:"background:#FFF0F0",延期:"background:#FFF7E6",除外:"background:#E6F7FF"};
+    const isv={标体:IC.check,拒保:IC.xCirc,延期:IC.clk28,除外:IC.min28};
+    document.getElementById("reModalBody").innerHTML=`<div class="res-icon" style="${ics[c]}">${isv[c]}</div><div class="res-title">核保结论：${c}</div><div class="res-detail">${ds[c]}</div><div class="res-note">* 以上为AI辅助建议，最终结论请以人工核保审核为准</div>`;
+    document.getElementById("reModalClose").textContent="关闭";
+  },2000);
+}
+
+// ===== Utils =====
+function eh(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br>")}
+function ea(s){return(s||"").replace(/"/g,"&quot;").replace(/'/g,"&#39;")}
+
+// ===== Init =====
+document.addEventListener("DOMContentLoaded",()=>{
+  document.querySelectorAll(".tab-bar button").forEach(b=>b.addEventListener("click",()=>{
+    const target=b.dataset.page;
+    if(target==="profile"&&!isAuthorized){
+      document.getElementById("wxAuthModal").classList.add("show");
+      return;
+    }
+    if(target==="profile"&&isAuthorized&&!isProfileSetup){
+      page="profile";render();
+      document.getElementById("profileSetupModal").classList.add("show");
+      return;
+    }
+    page=target;render();
+  }));
+  document.getElementById("reModalClose").addEventListener("click",()=>document.getElementById("reModal").classList.remove("show"));
+  document.getElementById("reModal").addEventListener("click",e=>{if(e.target.id==="reModal")e.target.classList.remove("show")});
+  document.getElementById("imgModal").addEventListener("click",()=>document.getElementById("imgModal").classList.remove("show"));
+  document.getElementById("agrClose").addEventListener("click",()=>document.getElementById("agrModal").classList.remove("show"));
+  document.getElementById("agrModal").addEventListener("click",e=>{if(e.target.id==="agrModal")e.target.classList.remove("show")});
+
+  // WeChat Auth
+  document.getElementById("wxAuthBtn").addEventListener("click",()=>{
+    const btn=document.getElementById("wxAuthBtn");
+    btn.innerHTML='<div class="spinner" style="width:20px;height:20px;border-width:2px;margin:0"></div> 授权中...';
+    btn.disabled=true;
+    setTimeout(()=>{
+      isAuthorized=true;
+      document.getElementById("wxAuthModal").classList.remove("show");
+      btn.innerHTML='<svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 0 1 .213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 0 0 .167-.054l1.903-1.114a.864.864 0 0 1 .717-.098 10.16 10.16 0 0 0 2.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348z"/></svg>微信一键授权';
+      btn.disabled=false;
+      page="profile";render();
+      setTimeout(()=>document.getElementById("profileSetupModal").classList.add("show"),300);
+    },1500);
+  });
+  document.getElementById("wxAuthCancel").addEventListener("click",()=>{
+    document.getElementById("wxAuthModal").classList.remove("show");
+  });
+
+  // Profile Setup
+  document.getElementById("setupSubmitBtn").addEventListener("click",()=>{
+    const isAgent=document.querySelector('input[name="isAgent"]:checked');
+    const company=document.getElementById("companySelect").value;
+    const agentId=document.getElementById("agentIdInput").value.trim();
+    if(!isAgent){alert("请选择是否为代理人");return;}
+    if(!company){alert("请选择所属经纪公司");return;}
+    if(!agentId){alert("请输入经纪人编号");return;}
+    isProfileSetup=true;
+    ME.company=company;ME.agentId=agentId;ME.isAgent=isAgent.value==="yes";
+    document.getElementById("profileSetupModal").classList.remove("show");
+    render();
+  });
+
+  render();
+});
+</script>
+</body>
+</html>
