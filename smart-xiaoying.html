@@ -70,6 +70,11 @@ body{font-family:"AlibabaPuHuiTi","PingFang SC","Hiragino Sans GB","Microsoft Ya
 .home-hero::before{content:"";position:absolute;bottom:-20px;left:-30px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.05)}
 .home-hdr{padding:14px 16px 16px;position:relative;z-index:1}
 .home-hdr .brand{font-size:22px;font-weight:700;color:#fff;letter-spacing:1px}
+.edit-btn{position:absolute;right:16px;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:4px;padding:6px 14px;background:var(--green);color:#fff;border:none;border-radius:16px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;box-shadow:0 2px 8px rgba(91,143,249,.25)}.edit-btn:active{transform:translateY(-50%) scale(.96)}
+.edit-btn.save{background:#52C41A}.edit-btn.cancel{background:#999;margin-right:8px}
+.info-cell input.edit-inp,.info-cell select.edit-inp{width:100%;padding:6px 10px;border:1.5px solid var(--green);border-radius:8px;font-size:13px;color:var(--text-primary);background:var(--green-light);outline:none;transition:border-color .2s}
+.info-cell input.edit-inp:focus,.info-cell select.edit-inp:focus{border-color:var(--green-dark)}
+.nickname-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;background:var(--green-light);color:var(--green);border-radius:10px;font-size:11px;font-weight:500;margin-left:6px}
 .hero-card{margin:0 16px 0 16px;border-radius:16px;background:rgba(255,255,255,.15);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);padding:10px 0 10px 20px;position:relative;z-index:1;display:flex;align-items:flex-start;gap:16px;flex-direction:row-reverse;height:165px;box-sizing:border-box}
 .hero-card .hero-illust{width:140px;height:160px;border-radius:0;object-fit:contain;object-position:center bottom;flex-shrink:0;background:none;box-shadow:none;margin-right:-10px;mix-blend-mode:multiply}
 .hero-card .hero-text{flex:1;text-align:left;min-width:0;margin-top:20px}
@@ -772,22 +777,22 @@ body{font-family:"AlibabaPuHuiTi","PingFang SC","Hiragino Sans GB","Microsoft Ya
 <script>
 // ===== Data =====
 const DATA=[
-  {id:1,name:"张伟",age:45,gender:"男",phone:"138****1234",createdAt:"2026-06-10 14:30",pre:"高血压（2级）、2型糖尿病",cond:"患者于2019年确诊高血压2级，长期服用氨氯地平片5mg qd，血压控制在130/85mmHg左右。2021年确诊2型糖尿病，目前口服二甲双胍0.5g bid，空腹血糖维持在6.5-7.2mmol/L之间。无其他重大慢性疾病史，无手术史，无过敏史。",
+  {id:1,name:"张伟",nickname:"小张",age:45,gender:"男",phone:"138****1234",createdAt:"2026-06-10 14:30",pre:"高血压（2级）、2型糖尿病",cond:"患者于2019年确诊高血压2级，长期服用氨氯地平片5mg qd，血压控制在130/85mmHg左右。2021年确诊2型糖尿病，目前口服二甲双胍0.5g bid，空腹血糖维持在6.5-7.2mmol/L之间。无其他重大慢性疾病史，无手术史，无过敏史。",
     imgs:{"2026-06-10":["https://picsum.photos/seed/m1a/300/200","https://picsum.photos/seed/m1b/300/200"],"2026-06-08":["https://picsum.photos/seed/m1c/300/200"],"2026-06-05":["https://picsum.photos/seed/m1d/300/200","https://picsum.photos/seed/m1e/300/200","https://picsum.photos/seed/m1f/300/200"]},
     recs:[{id:101,date:"2026-06-10",con:"除外",prod:"某重疾险",txt:"因高血压2级及2型糖尿病，除外心脑血管相关疾病及糖尿病并发症。"},{id:102,date:"2026-05-20",con:"延期",prod:"某医疗险",txt:"近期血糖波动较大，建议稳定3个月后重新申请。"}]},
-  {id:2,name:"李娜",age:32,gender:"女",phone:"139****5678",createdAt:"2026-06-09 10:15",pre:"甲状腺结节（TI-RADS 3类）",cond:"患者2025年体检发现甲状腺结节，TI-RADS 3类，大小约0.8cm×0.5cm，边界清晰，无钙化。甲状腺功能检查正常（TSH 2.1mIU/L，FT3 4.8pmol/L，FT4 16.2pmol/L）。无甲状腺疾病家族史。建议定期随访。",
+  {id:2,name:"李娜",nickname:"娜娜",age:32,gender:"女",phone:"139****5678",createdAt:"2026-06-09 10:15",pre:"甲状腺结节（TI-RADS 3类）",cond:"患者2025年体检发现甲状腺结节，TI-RADS 3类，大小约0.8cm×0.5cm，边界清晰，无钙化。甲状腺功能检查正常（TSH 2.1mIU/L，FT3 4.8pmol/L，FT4 16.2pmol/L）。无甲状腺疾病家族史。建议定期随访。",
     imgs:{"2026-06-09":["https://picsum.photos/seed/m2a/300/200","https://picsum.photos/seed/m2b/300/200"]},
     recs:[{id:201,date:"2026-06-09",con:"标体",prod:"某重疾险",txt:"甲状腺结节TI-RADS 3类，甲功正常，标准体承保。"}]},
-  {id:3,name:"王强",age:55,gender:"男",phone:"137****9012",createdAt:"2026-06-08 09:45",pre:"冠心病（支架术后）、高脂血症",cond:"患者2024年因急性心肌梗死行PCI术，于前降支植入药物洗脱支架1枚。术后规律服用阿司匹林、氯吡格雷、阿托伐他汀等药物。目前心功能NYHA I级，LVEF 55%。合并高脂血症，LDL-C 2.8mmol/L。戒烟中。",
+  {id:3,name:"王强",nickname:"强哥",age:55,gender:"男",phone:"137****9012",createdAt:"2026-06-08 09:45",pre:"冠心病（支架术后）、高脂血症",cond:"患者2024年因急性心肌梗死行PCI术，于前降支植入药物洗脱支架1枚。术后规律服用阿司匹林、氯吡格雷、阿托伐他汀等药物。目前心功能NYHA I级，LVEF 55%。合并高脂血症，LDL-C 2.8mmol/L。戒烟中。",
     imgs:{"2026-06-08":["https://picsum.photos/seed/m3a/300/200"],"2026-06-03":["https://picsum.photos/seed/m3b/300/200","https://picsum.photos/seed/m3c/300/200"]},
     recs:[{id:301,date:"2026-06-08",con:"拒保",prod:"某重疾险",txt:"冠心病支架术后不足2年，心功能虽为NYHA I级，但整体风险较高，暂不予承保。"},{id:302,date:"2026-06-08",con:"拒保",prod:"某定期寿险",txt:"冠心病支架术后，死亡风险显著增加，拒保。"}]},
-  {id:4,name:"赵敏",age:28,gender:"女",phone:"136****3456",createdAt:"2026-06-07 16:20",pre:"乳腺结节（BI-RADS 2类）",cond:"患者2025年体检发现双侧乳腺多发小结节，最大约0.6cm×0.4cm，BI-RADS 2类，考虑良性可能。无乳头溢液，无腋窝淋巴结肿大。无乳腺癌家族史。建议6个月后复查乳腺超声。",
+  {id:4,name:"赵敏",nickname:"敏敏",age:28,gender:"女",phone:"136****3456",createdAt:"2026-06-07 16:20",pre:"乳腺结节（BI-RADS 2类）",cond:"患者2025年体检发现双侧乳腺多发小结节，最大约0.6cm×0.4cm，BI-RADS 2类，考虑良性可能。无乳头溢液，无腋窝淋巴结肿大。无乳腺癌家族史。建议6个月后复查乳腺超声。",
     imgs:{"2026-06-07":["https://picsum.photos/seed/m4a/300/200"]},
     recs:[{id:401,date:"2026-06-07",con:"标体",prod:"某重疾险",txt:"乳腺结节BI-RADS 2类，考虑良性，标准体承保。"}]},
-  {id:5,name:"陈建国",age:50,gender:"男",phone:"135****7890",createdAt:"2026-06-05 11:30",pre:"乙肝大三阳、轻度脂肪肝",cond:"患者既往乙肝大三阳（HBsAg+、HBeAg+、HBcAb+），HBV-DNA 1.2×10^5 IU/mL，肝功能ALT 58U/L（轻度升高），AST 42U/L。腹部超声提示轻度脂肪肝，肝实质回声稍增强。目前未行抗病毒治疗。",
+  {id:5,name:"陈建国",nickname:"老陈",age:50,gender:"男",phone:"135****7890",createdAt:"2026-06-05 11:30",pre:"乙肝大三阳、轻度脂肪肝",cond:"患者既往乙肝大三阳（HBsAg+、HBeAg+、HBcAb+），HBV-DNA 1.2×10^5 IU/mL，肝功能ALT 58U/L（轻度升高），AST 42U/L。腹部超声提示轻度脂肪肝，肝实质回声稍增强。目前未行抗病毒治疗。",
     imgs:{"2026-06-05":["https://picsum.photos/seed/m5a/300/200","https://picsum.photos/seed/m5b/300/200"],"2026-06-01":["https://picsum.photos/seed/m5c/300/200"]},
     recs:[{id:501,date:"2026-06-05",con:"除外",prod:"某医疗险",txt:"乙肝大三阳且肝功能异常，除外肝脏相关疾病（含肝炎、肝硬化、肝癌）。"}]},
-  {id:6,name:"孙丽",age:38,gender:"女",phone:"133****2345",createdAt:"2026-06-03 08:50",pre:"子宫肌瘤",cond:"患者2025年超声检查发现子宫肌瘤，大小约2.5cm×2.0cm，位于肌壁间，月经量稍多但周期正常。血红蛋白118g/L，无贫血。无其他妇科疾病。建议定期复查超声。",
+  {id:6,name:"孙丽",nickname:"丽姐",age:38,gender:"女",phone:"133****2345",createdAt:"2026-06-03 08:50",pre:"子宫肌瘤",cond:"患者2025年超声检查发现子宫肌瘤，大小约2.5cm×2.0cm，位于肌壁间，月经量稍多但周期正常。血红蛋白118g/L，无贫血。无其他妇科疾病。建议定期复查超声。",
     imgs:{"2026-06-03":["https://picsum.photos/seed/m6a/300/200"]},
     recs:[{id:601,date:"2026-06-03",con:"标体",prod:"某重疾险",txt:"子宫肌瘤<5cm，无贫血，标准体承保。"}]}
 ];
@@ -806,7 +811,7 @@ function bIco(c){
 
 // ===== State =====
 let page="home",detId=null,detTab="info",vidCount=6,msgs=[{r:"a",c:"你好，我是英仕无忧!\n\n我是你的专属健康险智核助手，可以帮你\n√快速完成在线智能核保\n√解答承保条件与保障范围疑问\n√指导健康告知如何如实填写\n\n告诉我你的情况，我来帮你找到最合适的方案\n\n（内容由AI生成，仅供参考，不构成专业医疗或法律建议）",t:ts()},{r:"u",c:"这是我的体检报告，帮我分析一下",t:ts()},{r:"img",img:"images/checkup-report.png",t:ts()},{r:"a",c:"已收到您的体检报告图片，正在进行智能识别...\n\n【识别结果】\n• 血常规：白细胞计数偏高（11.2×10⁹/L）\n• 甲状腺功能：TSH正常，FT3/FT4正常\n• 肝功能：ALT轻度升高（52 U/L）\n• 血糖：空腹血糖 5.8 mmol/L（正常范围）\n\n【初步建议】\n1. 白细胞偏高建议结合近期是否有感染症状\n2. ALT轻度升高需关注，建议复查\n3. 整体指标在可承保范围内\n\n如需进一步核保评估，请补充既往病史信息。",t:ts()}],inp="",aSearch="",uSearch="",uFilter="全部";
-let isAuthorized=false,isProfileSetup=false;
+let isAuthorized=false,isProfileSetup=false;let detEdit=false;
 let selectedProduct="平安人生免健告版";
 let aiLoading=false,aiResult=null,aiPatient=null;let awaitingNickname=false;
 let walletBalance=3680.50,walletAction="",walletTxns=[
@@ -1018,12 +1023,12 @@ function bChat(){
     setTimeout(()=>{msgs.push({r:"a",c:"已收到您上传的文件「"+f.name+"」。\n\n我正在对文件内容进行智能分析，以下是初步结果：\n\n【文件识别】\n已成功读取文件内容，包含医学检查相关数据。\n\n【分析建议】\n1. 检验指标已提取，部分指标存在异常标记\n2. 建议结合临床症状综合判断\n3. 如需核保评估，请补充患者基本信息\n\n您可以继续描述相关问题，我会结合上传的文件为您做进一步分析。",t:ts()});render()},2000);
   });
 }
-function doSend(){if(!inp.trim())return;const sendText=inp.trim();inp="";if(awaitingNickname){awaitingNickname=false;msgs.push({r:"u",c:sendText,t:ts()});render();const sc=document.getElementById("cScroll");const tip=document.createElement("div");tip.className="typing";tip.innerHTML=`<div class="m-av">${IC.bot}</div><div class="bbl"><span></span><span></span><span></span></div>`;sc.appendChild(tip);sc.scrollTop=sc.scrollHeight;setTimeout(()=>{const now=new Date();const ts2=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0")+" "+String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");const newId=DATA.length+1;DATA.push({id:newId,name:sendText,age:30,gender:"女",phone:"",createdAt:ts2,pre:"白细胞偏高、ALT轻度升高、空腹血糖正常高值",cond:"体检报告示：白细胞计数偏高（11.2×10⁹/L），常见于近期感染或应激反应；丙氨酸转氨酶轻度升高（52 U/L），建议2周后复查肝功能；空腹血糖5.8 mmol/L，处于正常高值区间；甲状腺功能各项指标正常。建议结合临床症状进一步评估。",imgs:{},recs:[]});msgs.push({r:"a",c:"好的，已为用户「"+sendText+"」创建健康档案：\n\n【档案编号】DA-"+String(newId).padStart(6,"0")+"\n【创建时间】"+ts2+"\n\n【健康摘要】\n• 血常规：白细胞偏高，需关注\n• 肝功能：ALT轻度升高\n• 血糖：正常范围\n• 甲状腺：各项指标正常\n\n档案已保存至「档案管理」，可随时查看和补充完善。",t:ts()});render()},1500);return}msgs.push({r:"u",c:sendText,t:ts()});render();const sc=document.getElementById("cScroll");const tip=document.createElement("div");tip.className="typing";tip.id="tipEl";tip.innerHTML=`<div class="m-av">${IC.bot}</div><div class="bbl"><span></span><span></span><span></span></div>`;sc.appendChild(tip);sc.scrollTop=sc.scrollHeight;const last=msgs[msgs.length-1].c;setTimeout(()=>{msgs.push({r:"a",c:aiR(last),t:ts()});render()},1500)}
+function doSend(){if(!inp.trim())return;const sendText=inp.trim();inp="";if(awaitingNickname){awaitingNickname=false;msgs.push({r:"u",c:sendText,t:ts()});render();const sc=document.getElementById("cScroll");const tip=document.createElement("div");tip.className="typing";tip.innerHTML=`<div class="m-av">${IC.bot}</div><div class="bbl"><span></span><span></span><span></span></div>`;sc.appendChild(tip);sc.scrollTop=sc.scrollHeight;setTimeout(()=>{const now=new Date();const ts2=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0")+" "+String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");const newId=DATA.length+1;DATA.push({id:newId,name:"待完善",nickname:sendText,age:30,gender:"女",phone:"",createdAt:ts2,pre:"白细胞偏高、ALT轻度升高、空腹血糖正常高值",cond:"体检报告示：白细胞计数偏高（11.2×10⁹/L），常见于近期感染或应激反应；丙氨酸转氨酶轻度升高（52 U/L），建议2周后复查肝功能；空腹血糖5.8 mmol/L，处于正常高值区间；甲状腺功能各项指标正常。建议结合临床症状进一步评估。",imgs:{},recs:[]});msgs.push({r:"a",c:"好的，已为用户「"+sendText+"」创建健康档案：\n\n【档案编号】DA-"+String(newId).padStart(6,"0")+"\n【创建时间】"+ts2+"\n\n【健康摘要】\n• 血常规：白细胞偏高，需关注\n• 肝功能：ALT轻度升高\n• 血糖：正常范围\n• 甲状腺：各项指标正常\n\n档案已保存至「档案管理」，可随时查看和补充完善。",t:ts()});render()},1500);return}msgs.push({r:"u",c:sendText,t:ts()});render();const sc=document.getElementById("cScroll");const tip=document.createElement("div");tip.className="typing";tip.id="tipEl";tip.innerHTML=`<div class="m-av">${IC.bot}</div><div class="bbl"><span></span><span></span><span></span></div>`;sc.appendChild(tip);sc.scrollTop=sc.scrollHeight;const last=msgs[msgs.length-1].c;setTimeout(()=>{msgs.push({r:"a",c:aiR(last),t:ts()});render()},1500)}
 
 // -- Archives --
 function rArchives(){
   let ls=DATA.slice();if(aSearch.trim())ls=ls.filter(a=>a.name.includes(aSearch.trim()));ls.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
-  const cs=ls.length===0?`<div class="empty">${IC.emptyDoc}<p>未找到匹配的档案</p></div>`:ls.map(a=>`<div class="a-card" data-id="${a.id}"><div class="av ${avC(a.name)}">${a.name[0]}</div><div class="c-info"><div class="c-top"><span class="c-name">${a.name}</span><span class="chev-r">${IC.chevR}</span></div><div class="c-meta">${a.gender} · ${a.age}岁</div><div class="c-tag">${IC.alert}${a.pre}</div><div class="c-time">${IC.clock}${a.createdAt}</div></div></div>`).join("");
+  const cs=ls.length===0?`<div class="empty">${IC.emptyDoc}<p>未找到匹配的档案</p></div>`:ls.map(a=>`<div class="a-card" data-id="${a.id}"><div class="av ${avC(a.name)}">${a.name[0]}</div><div class="c-info"><div class="c-top"><span class="c-name">${a.name}</span><span class="chev-r">${IC.chevR}</span></div><div class="c-meta">${a.gender} · ${a.age}岁${a.nickname?`<span class="nickname-badge">昵称: ${a.nickname}</span>`:""}</div><div class="c-tag">${IC.alert}${a.pre}</div><div class="c-time">${IC.clock}${a.createdAt}</div></div></div>`).join("");
   return`<div class="page active" style="display:flex"><div class="gh"><h2>档案管理</h2><div class="sub">共 ${DATA.length} 份健康档案</div></div><div class="search-wrap"><div class="search-box">${IC.search}<input id="aSI" placeholder="搜索客户姓名..." value="${ea(aSearch)}"/>${aSearch?`<button class="clr-btn" id="aClr">${IC.close}</button>`:""}</div></div><div class="list-area">${cs}</div></div>`;
 }
 function bArchives(){
@@ -1048,7 +1053,7 @@ function rDetail(){
   const th=tabs.map(([k,l])=>`<button class="${detTab===k?"on":""}" data-t="${k}">${l}</button>`).join("");
   let body="";
   if(detTab==="info"){
-    const its=[["姓名",a.name],["年龄",a.age+"岁"],["性别",a.gender],["电话",a.phone],["建档时间",a.createdAt],["档案编号","DA-"+String(a.id).padStart(6,"0")]];
+    const its=detEdit?[["姓名",a.name,"name"],["年龄",a.age,"age"],["性别",a.gender,"gender"],["电话",a.phone||"","phone"]]:[["姓名",a.name],["昵称",a.nickname||"-"],["年龄",a.age+"岁"],["性别",a.gender],["电话",a.phone||"-"],["建档时间",a.createdAt],["档案编号","DA-"+String(a.id).padStart(6,"0")]];
     const hs=getHealthStatus(a);
     const gaugeR=45,gaugeCx=55,gaugeCy=55,gaugeCirc=Math.PI*gaugeR;
     const gaugeOffset=gaugeCirc*(1-hs.score/100);
@@ -1056,7 +1061,10 @@ function rDetail(){
     const lvls=[{n:"危急",c:"#FF4D4F",bg:"rgba(255,77,79,.25)"},{n:"风险",c:"#FF6B35",bg:"rgba(255,107,53,.25)"},{n:"预警",c:"#FA8C16",bg:"rgba(250,140,22,.25)"},{n:"一般",c:"#FAAD14",bg:"rgba(250,173,20,.25)"},{n:"良好",c:"#52C41A",bg:"rgba(82,196,26,.25)"}];
     const lvlHtml=lvls.map((l,i)=>`<div class="lv${i===hs.idx?' active':''}" style="background:${l.bg};color:${l.c}">${l.n}</div>`).join("");
     const hsCard=`<div class="hs-card"><div class="hs-top"><div class="hs-gauge">${gaugeSvg}<div class="hs-score-wrap"><div class="hs-score-num">${hs.score}</div><div class="hs-score-unit">分</div></div></div><div class="hs-info"><span class="hs-level" style="background:${hs.bg};color:${hs.color}">健康${hs.level}</span><div class="hs-advice">${hs.advice}</div></div></div><div class="hs-levels">${lvlHtml}</div></div>`;
-    body=`<div class="d-card"><h4>${IC.user}基本信息</h4><div class="info-grid">${its.map(([l,v])=>`<div class="info-cell"><div class="il">${l}</div><div class="iv">${v}</div></div>`).join("")}</div></div><div class="d-card"><h4 style="color:#FA8C16">${IC.alert.replace('currentColor','#FA8C16')}既往症概要</h4><p style="font-size:13px;color:var(--text-secondary);line-height:1.7">${a.pre}</p></div>${hsCard}`;
+    const editBtnHtml=detEdit?`<button class="edit-btn cancel" id="editCancel">取消</button><button class="edit-btn save" id="editSave">保存</button>`:`<button class="edit-btn" id="editBtn">编辑</button>`;
+    let gridHtml="";
+    if(detEdit){gridHtml=its.map(function(it){var l=it[0],v=it[1],k=it[2];var inp="";if(k==="gender"){inp='<select class="edit-inp" data-k="'+k+'"><option value="男"'+(v==="男"?" selected":"")+' >男</option><option value="女"'+(v==="女"?" selected":"")+' >女</option></select>'}else{inp='<input class="edit-inp" data-k="'+k+'" value="'+v+'" placeholder="请输入'+l+'"/>';}return'<div class="info-cell"><div class="il">'+l+'</div>'+inp+'</div>';}).join("")}else{gridHtml=its.map(function(it){return'<div class="info-cell"><div class="il">'+it[0]+'</div><div class="iv">'+it[1]+'</div></div>';}).join("")}
+    body=`<div class="d-card" style="position:relative"><h4>${IC.user}基本信息${editBtnHtml}</h4><div class="info-grid">${gridHtml}</div></div><div class="d-card"><h4 style="color:#FA8C16">${IC.alert.replace('currentColor','#FA8C16')}既往症概要</h4><p style="font-size:13px;color:var(--text-secondary);line-height:1.7">${a.pre}</p></div>${hsCard}`;
   }else if(detTab==="conditions"){
     body=`<div class="d-card"><h4>${IC.activity}既往症病史<span style="margin-left:auto;font-size:10px;color:var(--text-tertiary);background:var(--bg);padding:3px 10px;border-radius:10px;font-weight:400">由智能小英总结</span></h4><div class="ai-notice"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><p>以下病史信息由智能小英AI根据客户提交的病历资料自动总结生成，仅供参考。</p></div><div class="cond-text">${a.cond}</div></div>`;
   }else if(detTab==="images"){
@@ -1069,11 +1077,14 @@ function rDetail(){
     else{const rcs=a.recs.map(r=>`<div class="d-card rec-card"><div class="r-top"><span class="r-date">${r.date}</span><span class="badge ${bCls(r.con)}">${bIco(r.con)}${r.con}</span></div><div class="r-prod">${IC.file}${r.prod}</div><div class="r-txt">${r.txt}</div></div>`).join("");body=rcs+`<button class="re-btn" id="reBtn">${IC.refresh}重新核保</button>`;}
   }
   const aiBar=detTab==="conditions"?'<div class="ai-bottom-bar"><button class="ai-interpret-btn" id="aiInterpBtn"><span class="ai-btn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.09 6.26L20 9.27l-5 3.64L16.18 20 12 16.77 7.82 20 9 12.91l-5-3.64 5.91-1.01z"/></svg></span><span class="ai-btn-txt"><span class="t1">AI智能解读</span><span class="t2">基于病历资料，智能分析病史风险</span></span><svg class="ai-btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button></div>':"";
-  return`<div class="page active" style="display:flex"><div class="dtl-hdr"><button class="bk" id="bkBtn">${IC.chevL}</button><h2>档案详情</h2></div><div class="user-banner"><div class="av lg ${avC(a.name)}">${a.name[0]}</div><div><div class="uname">${a.name}</div><div class="umeta">${a.gender} · ${a.age}岁 · ${a.phone}</div><div class="utime">建档时间：${a.createdAt}</div></div></div><div class="dtl-tabs">${th}</div><div class="dtl-body">${body}</div>${aiBar}</div>`;
+  return`<div class="page active" style="display:flex"><div class="dtl-hdr"><button class="bk" id="bkBtn">${IC.chevL}</button><h2>档案详情</h2></div><div class="user-banner"><div class="av lg ${avC(a.name)}">${a.name[0]}</div><div><div class="uname">${a.name}${a.nickname?` <span style="font-size:12px;color:var(--green);font-weight:400">(${a.nickname})</span>`:""}</div><div class="umeta">${a.gender} · ${a.age}岁 · ${a.phone||""}</div><div class="utime">建档时间：${a.createdAt}</div></div></div><div class="dtl-tabs">${th}</div><div class="dtl-body">${body}</div>${aiBar}</div>`;
 }
 function bDetail(){
   document.getElementById("bkBtn")?.addEventListener("click",()=>{detId=null;render()});
   document.querySelectorAll(".dtl-tabs button").forEach(b=>b.addEventListener("click",()=>{detTab=b.dataset.t;render()}));
+  document.getElementById("editBtn")?.addEventListener("click",()=>{detEdit=true;render()});
+  document.getElementById("editCancel")?.addEventListener("click",()=>{detEdit=false;render()});
+  document.getElementById("editSave")?.addEventListener("click",()=>{const a=DATA.find(x=>x.id===detId);if(!a)return;document.querySelectorAll(".edit-inp").forEach(el=>{const k=el.dataset.k;const v=el.value.trim();if(k==="name"&&v)a.name=v;if(k==="age"&&v)a.age=parseInt(v)||a.age;if(k==="gender"&&v)a.gender=v;if(k==="phone")a.phone=v;});detEdit=false;render()});
   document.querySelectorAll(".img-item").forEach(it=>it.addEventListener("click",()=>{const m=document.getElementById("imgModal");document.getElementById("imgModalImg").src=it.dataset.s;m.classList.add("show")}));
   document.getElementById("reBtn")?.addEventListener("click",()=>{const a=DATA.find(x=>x.id===detId);if(a)openRe(a)});
   document.getElementById("aiInterpBtn")?.addEventListener("click",()=>{const a=DATA.find(x=>x.id===detId);if(!a)return;aiPatient=a;aiLoading=true;aiResult=null;page="aiInterpret";render()});
