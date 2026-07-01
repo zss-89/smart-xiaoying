@@ -139,6 +139,27 @@ body{font-family:"AlibabaPuHuiTi","PingFang SC","Hiragino Sans GB","Microsoft Ya
 .chat-hdr .info .s{font-size:11px;opacity:.8;margin-top:1px}
 .chat-hdr .online{display:flex;align-items:center;gap:5px;font-size:11px;opacity:.8}
 .chat-hdr .online .dot{width:7px;height:7px;border-radius:50%;background:#93C5FD;animation:pulse 2s infinite}
+.chat-hdr .hist-btn{width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.15);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.chat-hdr .hist-btn:active{background:rgba(255,255,255,.3);transform:scale(.92)}
+.hist-overlay{position:absolute;inset:0;z-index:100;border-radius:44px;overflow:hidden;pointer-events:none}
+.hist-overlay.open{pointer-events:auto}
+.hist-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.35);opacity:0;transition:opacity .3s}
+.hist-overlay.open .hist-backdrop{opacity:1}
+.hist-panel{position:absolute;left:0;top:0;bottom:0;width:78%;background:#fff;transform:translateX(-100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;border-radius:0 16px 16px 0;box-shadow:4px 0 24px rgba(0,0,0,.12)}
+.hist-overlay.open .hist-panel{transform:translateX(0)}
+.hist-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 12px;border-bottom:1px solid var(--border)}
+.hist-hdr .hist-title{font-size:15px;font-weight:600;color:var(--text-primary)}
+.hist-hdr .hist-close{width:28px;height:28px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.hist-hdr .hist-close:active{background:#e0e0e0;transform:scale(.9)}
+.hist-new-btn{margin:12px 16px;padding:10px 0;border-radius:12px;border:1px dashed var(--border);background:var(--bg);font-size:13px;font-weight:500;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;font-family:inherit}
+.hist-new-btn:active{background:var(--green-light);border-color:var(--green);color:var(--green)}
+.hist-list{flex:1;overflow-y:auto;padding:0 12px 16px}
+.hist-group{font-size:11px;color:var(--text-tertiary);padding:10px 4px 6px;font-weight:500}
+.hist-item{padding:12px;border-radius:12px;cursor:pointer;transition:all .15s;margin-bottom:2px}
+.hist-item:active{background:var(--green-light)}
+.hist-item.active{background:var(--green-light)}
+.hist-item .hi-preview{font-size:13px;color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.hist-item .hi-time{font-size:11px;color:var(--text-tertiary);margin-top:4px}
 
 .chat-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:16px}
 .msg{display:flex;gap:8px;max-width:85%}
@@ -822,6 +843,12 @@ let walletBalance=3680.50,walletAction="",walletTxns=[
 ];
 let userPoints=28560,checkinStreak=3,checkinToday=false;
 let tasksDone={browse:false,chat:false,video:false};
+let currentChatId=1;
+let chatHistory=[
+  {id:1,preview:"这是我的体检报告，帮我分析一下",time:"06-28 14:30",group:"更早",msgs:null},
+  {id:2,preview:"有胆囊炎，可以买平安人生免健告版吗",time:"06-25 10:15",group:"更早",msgs:null},
+  {id:3,preview:"甲状腺结节3级还能投保吗",time:"06-20 16:42",group:"更早",msgs:null}
+];
 
 const VIDEOS=[
   {id:1,title:"什么是健康告知？投保前必看",views:"2.3万",dur:"03:25",img:"images/v1.png",free:true},
@@ -994,7 +1021,7 @@ function rChat(){
   const checkSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
   const arrowSvg='<svg class="qk-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
   const qk=msgs.length<=1?`<div class="quick-row"><div class="qk-trigger" id="qkTrigger"><span class="qk-label">产品版本</span><span class="qk-val" id="qkVal">${eh(selectedProduct)}</span>${arrowSvg}</div><div class="qk-panel" id="qkPanel">${products.map(p=>`<div class="quick-card${p.n===selectedProduct?' selected':''}" data-t="${eh(p.t)}" data-n="${eh(p.n)}"><div class="qc-info"><div class="qc-title">${eh(p.n)}</div><div class="qc-sub">${eh(p.s)}</div></div><div class="qc-check">${checkSvg}</div></div>`).join("")}</div></div>`:"";
-  return`<div class="page active" style="display:flex"><div class="chat-wrap"><div class="chat-hdr"><div class="bot-av">${IC.bot}</div><div class="info"><div class="t">智能小英</div><div class="s">医疗咨询 · 智能核保</div></div></div><div class="chat-msgs" id="cScroll">${ms}</div>${qk}<div class="quick-ask" id="quickAsk"><div class="qa-btn" data-t="帮我做智能核保评估">${IC.shield}<span>智能核保</span></div><div class="qa-btn" data-t="我想了解平安人生免健告版的产品详情">${IC.heart}<span>平安人生免健告版</span></div><div class="qa-btn" data-t="我想了解平安人生易保版的产品详情">${IC.file}<span>平安人生易保版</span></div><div class="qa-btn" data-t="我想了解平安人生标准版的产品详情">${IC.fileIco}<span>平安人生标准版</span></div></div><div class="chat-bar"><button class="upload-btn" id="uploadBtn" title="上传文件">${IC.upload}</button><input id="cInp" placeholder="输入您的问题..." value="${ea(inp)}"/><button class="send-btn" id="sendB" ${!inp.trim()?"disabled":""}>${IC.send}</button></div></div></div>`;
+  return`<div class="page active" style="display:flex"><div class="chat-wrap"><div class="chat-hdr"><button class="hist-btn" id="histBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></button><div class="bot-av">${IC.bot}</div><div class="info"><div class="t">智能小英</div><div class="s">医疗咨询 · 智能核保</div></div></div><div class="chat-msgs" id="cScroll">${ms}</div>${qk}<div class="quick-ask" id="quickAsk"><div class="qa-btn" data-t="帮我做智能核保评估">${IC.shield}<span>智能核保</span></div><div class="qa-btn" data-t="我想了解平安人生免健告版的产品详情">${IC.heart}<span>平安人生免健告版</span></div><div class="qa-btn" data-t="我想了解平安人生易保版的产品详情">${IC.file}<span>平安人生易保版</span></div><div class="qa-btn" data-t="我想了解平安人生标准版的产品详情">${IC.fileIco}<span>平安人生标准版</span></div></div><div class="chat-bar"><button class="upload-btn" id="uploadBtn" title="上传文件">${IC.upload}</button><input id="cInp" placeholder="输入您的问题..." value="${ea(inp)}"/><button class="send-btn" id="sendB" ${!inp.trim()?"disabled":""}>${IC.send}</button></div></div></div>`;
 }
 function bChat(){
   const inp2=document.getElementById("cInp"),sb=document.getElementById("sendB");
@@ -1013,6 +1040,7 @@ function bChat(){
   document.querySelectorAll(".ai-prompt").forEach(el=>el.addEventListener("click",function(){const type=this.dataset.prompt;const text=type==="more"?"请提供更多详细的分析资料":"好的，帮我生成用户健康档案";msgs.push({r:"u",c:text,t:ts()});render();const sc=document.getElementById("cScroll");const tip=document.createElement("div");tip.className="typing";tip.innerHTML=`<div class="m-av">${IC.bot}</div><div class="bbl"><span></span><span></span><span></span></div>`;sc.appendChild(tip);sc.scrollTop=sc.scrollHeight;if(type==="profile"){awaitingNickname=true}setTimeout(()=>{msgs.push({r:"a",c:type==="more"?"好的，以下是更详细的分析资料：\n\n【详细指标分析】\n• 白细胞（WBC）：11.2×10⁹/L，偏高，常见于细菌感染、应激反应\n• 丙氨酸转氨酶（ALT）：52 U/L，轻度升高，建议2周后复查\n• 空腹血糖：5.8 mmol/L，处于正常高值区间\n\n【风险评估】\n根据以上指标，初步评估为「加费承保」可能性较大。\n\n建议补充：近3个月完整体检报告、既往用药记录、家族病史信息。":"请帮您的用户起一个昵称",t:ts()});render()},1500)}));
   const sc=document.getElementById("cScroll");if(sc)sc.scrollTop=sc.scrollHeight;
   document.getElementById("uploadBtn")?.addEventListener("click",showUploadSheet);
+  document.getElementById("histBtn")?.addEventListener("click",showHistoryPanel);
 }
 function doSend(){if(!inp.trim())return;const sendText=inp.trim();inp="";if(awaitingNickname){awaitingNickname=false;msgs.push({r:"u",c:sendText,t:ts()});render();const sc=document.getElementById("cScroll");const tip=document.createElement("div");tip.className="typing";tip.innerHTML=`<div class="m-av">${IC.bot}</div><div class="bbl"><span></span><span></span><span></span></div>`;sc.appendChild(tip);sc.scrollTop=sc.scrollHeight;setTimeout(()=>{const now=new Date();const ts2=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0")+" "+String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");const newId=DATA.length+1;DATA.push({id:newId,name:"待完善",nickname:sendText,age:30,gender:"女",phone:"",createdAt:ts2,pre:"白细胞偏高、ALT轻度升高、空腹血糖正常高值",cond:"体检报告示：白细胞计数偏高（11.2×10⁹/L），常见于近期感染或应激反应；丙氨酸转氨酶轻度升高（52 U/L），建议2周后复查肝功能；空腹血糖5.8 mmol/L，处于正常高值区间；甲状腺功能各项指标正常。建议结合临床症状进一步评估。",imgs:{},recs:[]});msgs.push({r:"a",c:"好的，已为用户「"+sendText+"」创建健康档案：\n\n【档案编号】DA-"+String(newId).padStart(6,"0")+"\n【创建时间】"+ts2+"\n\n【健康摘要】\n• 血常规：白细胞偏高，需关注\n• 肝功能：ALT轻度升高\n• 血糖：正常范围\n• 甲状腺：各项指标正常\n\n档案已保存至「档案管理」，可随时查看和补充完善。",t:ts()});render()},1500);return}msgs.push({r:"u",c:sendText,t:ts()});render();const sc=document.getElementById("cScroll");const tip=document.createElement("div");tip.className="typing";tip.id="tipEl";tip.innerHTML=`<div class="m-av">${IC.bot}</div><div class="bbl"><span></span><span></span><span></span></div>`;sc.appendChild(tip);sc.scrollTop=sc.scrollHeight;const last=msgs[msgs.length-1].c;setTimeout(()=>{msgs.push({r:"a",c:aiR(last),t:ts()});render()},1500)}
 
@@ -1294,6 +1322,74 @@ function showUploadSheet(){
     var fi=document.createElement("input");fi.type="file";fi.accept=".pdf";
     fi.addEventListener("change",function(e){handleFileUpload(e.target.files[0])});
     fi.click();
+  });
+}
+
+function showHistoryPanel(){
+  var phone=document.querySelector(".phone");
+  var existing=document.getElementById("histOverlay");
+  if(existing)existing.remove();
+  var overlay=document.createElement("div");
+  overlay.id="histOverlay";
+  overlay.className="hist-overlay";
+  var closeSvg='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+  var plusSvg='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
+  var groups={};
+  chatHistory.forEach(function(h){if(!groups[h.group])groups[h.group]=[];groups[h.group].push(h)});
+  var groupKeys=Object.keys(groups);
+  var listHtml=groupKeys.map(function(gk){
+    return '<div class="hist-group">'+gk+'</div>'+groups[gk].map(function(h){
+      return '<div class="hist-item'+(h.id===currentChatId?' active':'')+'" data-cid="'+h.id+'"><div class="hi-preview">'+eh(h.preview)+'</div><div class="hi-time">'+h.time+'</div></div>';
+    }).join("");
+  }).join("");
+  overlay.innerHTML='<div class="hist-backdrop"></div>'
+    +'<div class="hist-panel">'
+    +'<div class="hist-hdr"><span class="hist-title">历史记录</span><button class="hist-close" id="histClose">'+closeSvg+'</button></div>'
+    +'<button class="hist-new-btn" id="histNew">'+plusSvg+'新建会话</button>'
+    +'<div class="hist-list">'+listHtml+'</div>'
+    +'</div>';
+  phone.appendChild(overlay);
+  requestAnimationFrame(function(){overlay.classList.add("open")});
+  var close=function(){
+    overlay.classList.remove("open");
+    setTimeout(function(){overlay.remove()},300);
+  };
+  overlay.querySelector(".hist-backdrop").addEventListener("click",close);
+  overlay.querySelector("#histClose").addEventListener("click",close);
+  overlay.querySelector("#histNew").addEventListener("click",function(){
+    var now=new Date();var tStr=String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0")+" "+String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");
+    var oldFirstUser="";for(var i=0;i<msgs.length;i++){if(msgs[i].r==="u"){oldFirstUser=msgs[i].c;break}}
+    if(oldFirstUser){
+      var existing=chatHistory.find(function(h){return h.id===currentChatId});
+      if(existing){existing.msgs=JSON.parse(JSON.stringify(msgs))}
+    }
+    var newId=chatHistory.length+1;
+    chatHistory.unshift({id:newId,preview:"新的对话",time:tStr,group:"今天",msgs:null});
+    currentChatId=newId;
+    msgs=[{r:"a",c:"你好，我是英仕无忧!\n\n我是你的专属健康险智核助手，可以帮你\n√快速完成在线智能核保\n√解答承保条件与保障范围疑问\n√指导健康告知如何填写\n\n告诉我你的情况，我来帮你找到最合适的方案\n\n（内容由AI生成，仅供参考，不构成专业医疗或法律建议）",t:ts()}];
+    inp="";
+    close();
+    render();
+  });
+  overlay.querySelectorAll(".hist-item").forEach(function(el){
+    el.addEventListener("click",function(){
+      var cid=+el.dataset.cid;
+      var oldFirstUser="";for(var i=0;i<msgs.length;i++){if(msgs[i].r==="u"){oldFirstUser=msgs[i].c;break}}
+      var existingEntry=chatHistory.find(function(h){return h.id===currentChatId});
+      if(existingEntry&&oldFirstUser){
+        existingEntry.preview=oldFirstUser.substring(0,20);
+        existingEntry.msgs=JSON.parse(JSON.stringify(msgs));
+      }
+      currentChatId=cid;
+      var target=chatHistory.find(function(h){return h.id===cid});
+      if(target&&target.msgs){msgs=JSON.parse(JSON.stringify(target.msgs))}
+      else if(target){
+        msgs=[{r:"a",c:"你好，我是英仕无忧!\n\n我是你的专属健康险智核助手，可以帮你\n√快速完成在线智能核保\n√解答承保条件与保障范围疑问\n√指导健康告知如何填写\n\n告诉我你的情况，我来帮你找到最合适的方案\n\n（内容由AI生成，仅供参考，不构成专业医疗或法律建议）",t:ts()}];
+      }
+      inp="";
+      close();
+      render();
+    });
   });
 }
 
