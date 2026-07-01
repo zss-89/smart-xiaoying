@@ -1258,18 +1258,20 @@ function showUploadSheet(){
   var overlay=document.createElement("div");
   overlay.id="uploadSheet";
   overlay.style.cssText="position:absolute;inset:0;background:rgba(0,0,0,.4);z-index:100;display:flex;align-items:flex-end;justify-content:center;border-radius:44px;overflow:hidden";
-  var albumIco='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5B8FF9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
-  var cameraIco='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#52C41A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>';
-  var fileIco='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FA8C16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>';
-  var itemStyle="display:flex;align-items:center;gap:14px;padding:16px 20px;cursor:pointer;transition:background .15s;border-radius:12px";
-  var labelStyle="font-size:15px;font-weight:500;color:#1a1a1a";
-  var icoBoxStyle="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0";
-  overlay.innerHTML='<div style="width:100%;background:#fff;border-radius:20px 20px 0 0;padding:8px 12px 32px;animation:slideUp .3s ease">'
-    +'<div style="text-align:center;padding:12px 0 8px;font-size:14px;font-weight:600;color:var(--text-primary)">选择上传方式</div>'
-    +'<div id="usAlbum" style="'+itemStyle+'"><div style="'+icoBoxStyle+';background:#E8F0FE">'+albumIco+'</div><span style="'+labelStyle+'">相册</span></div>'
-    +'<div id="usCamera" style="'+itemStyle+'"><div style="'+icoBoxStyle+';background:rgba(82,196,26,.1)">'+cameraIco+'</div><span style="'+labelStyle+'">拍照</span></div>'
-    +'<div id="usFile" style="'+itemStyle+'"><div style="'+icoBoxStyle+';background:rgba(250,140,22,.1)">'+fileIco+'</div><span style="'+labelStyle+'">文件</span></div>'
-    +'<div id="usCancel" style="text-align:center;padding:14px 0 0;font-size:14px;color:var(--text-tertiary);cursor:pointer;margin-top:4px">取消</div>'
+  var albumIco='<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5B8FF9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
+  var cameraIco='<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#52C41A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>';
+  var fileIco='<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FA8C16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>';
+  var colStyle="display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;padding:12px 0;flex:1";
+  var icoBoxStyle="width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center";
+  var labelStyle="font-size:13px;font-weight:500;color:#1a1a1a";
+  overlay.innerHTML='<div style="width:100%;background:#fff;border-radius:20px 20px 0 0;padding:8px 16px 32px;animation:slideUp .3s ease">'
+    +'<div style="text-align:center;padding:12px 0 4px;font-size:14px;font-weight:600;color:var(--text-primary)">选择上传方式</div>'
+    +'<div style="display:flex;justify-content:space-around;padding:12px 0">'
+    +'<div id="usAlbum" style="'+colStyle+'"><div style="'+icoBoxStyle+';background:#E8F0FE">'+albumIco+'</div><span style="'+labelStyle+'">相册</span></div>'
+    +'<div id="usCamera" style="'+colStyle+'"><div style="'+icoBoxStyle+';background:rgba(82,196,26,.1)">'+cameraIco+'</div><span style="'+labelStyle+'">拍照</span></div>'
+    +'<div id="usFile" style="'+colStyle+'"><div style="'+icoBoxStyle+';background:rgba(250,140,22,.1)">'+fileIco+'</div><span style="'+labelStyle+'">文件</span></div>'
+    +'</div>'
+    +'<div id="usCancel" style="text-align:center;padding:10px 0 0;font-size:14px;color:var(--text-tertiary);cursor:pointer;border-top:1px solid var(--border)">取消</div>'
     +'</div>';
   phone.appendChild(overlay);
   var close=function(){overlay.remove()};
