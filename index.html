@@ -994,7 +994,7 @@ function rChat(){
   const checkSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
   const arrowSvg='<svg class="qk-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
   const qk=msgs.length<=1?`<div class="quick-row"><div class="qk-trigger" id="qkTrigger"><span class="qk-label">产品版本</span><span class="qk-val" id="qkVal">${eh(selectedProduct)}</span>${arrowSvg}</div><div class="qk-panel" id="qkPanel">${products.map(p=>`<div class="quick-card${p.n===selectedProduct?' selected':''}" data-t="${eh(p.t)}" data-n="${eh(p.n)}"><div class="qc-info"><div class="qc-title">${eh(p.n)}</div><div class="qc-sub">${eh(p.s)}</div></div><div class="qc-check">${checkSvg}</div></div>`).join("")}</div></div>`:"";
-  return`<div class="page active" style="display:flex"><div class="chat-wrap"><div class="chat-hdr"><div class="bot-av">${IC.bot}</div><div class="info"><div class="t">智能小英</div><div class="s">医疗咨询 · 智能核保</div></div></div><div class="chat-msgs" id="cScroll">${ms}</div>${qk}<div class="quick-ask" id="quickAsk"><div class="qa-btn" data-t="帮我做智能核保评估">${IC.shield}<span>智能核保</span></div><div class="qa-btn" data-t="我想了解平安人生免健告版的产品详情">${IC.heart}<span>平安人生免健告版</span></div><div class="qa-btn" data-t="我想了解平安人生易保版的产品详情">${IC.file}<span>平安人生易保版</span></div><div class="qa-btn" data-t="我想了解平安人生标准版的产品详情">${IC.fileIco}<span>平安人生标准版</span></div></div><div class="chat-bar"><label class="upload-btn" title="上传文件">${IC.upload}<input type="file" id="fileUp" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt"/></label><input id="cInp" placeholder="输入您的问题..." value="${ea(inp)}"/><button class="send-btn" id="sendB" ${!inp.trim()?"disabled":""}>${IC.send}</button></div></div></div>`;
+  return`<div class="page active" style="display:flex"><div class="chat-wrap"><div class="chat-hdr"><div class="bot-av">${IC.bot}</div><div class="info"><div class="t">智能小英</div><div class="s">医疗咨询 · 智能核保</div></div></div><div class="chat-msgs" id="cScroll">${ms}</div>${qk}<div class="quick-ask" id="quickAsk"><div class="qa-btn" data-t="帮我做智能核保评估">${IC.shield}<span>智能核保</span></div><div class="qa-btn" data-t="我想了解平安人生免健告版的产品详情">${IC.heart}<span>平安人生免健告版</span></div><div class="qa-btn" data-t="我想了解平安人生易保版的产品详情">${IC.file}<span>平安人生易保版</span></div><div class="qa-btn" data-t="我想了解平安人生标准版的产品详情">${IC.fileIco}<span>平安人生标准版</span></div></div><div class="chat-bar"><button class="upload-btn" id="uploadBtn" title="上传文件">${IC.upload}</button><input id="cInp" placeholder="输入您的问题..." value="${ea(inp)}"/><button class="send-btn" id="sendB" ${!inp.trim()?"disabled":""}>${IC.send}</button></div></div></div>`;
 }
 function bChat(){
   const inp2=document.getElementById("cInp"),sb=document.getElementById("sendB");
@@ -1012,17 +1012,7 @@ function bChat(){
   document.querySelectorAll(".ai-regen").forEach(btn=>btn.addEventListener("click",function(){const idx=+this.dataset.idx;let lastUser="";for(let i=idx-1;i>=0;i--){if(msgs[i].r==="u"){lastUser=msgs[i].c;break}}if(!lastUser)return;msgs.splice(idx,1);render();const sc=document.getElementById("cScroll");const tip=document.createElement("div");tip.className="typing";tip.innerHTML=`<div class="m-av">${IC.bot}</div><div class="bbl"><span></span><span></span><span></span></div>`;sc.appendChild(tip);sc.scrollTop=sc.scrollHeight;setTimeout(()=>{msgs.push({r:"a",c:aiR(lastUser),t:ts()});render()},1500)}));
   document.querySelectorAll(".ai-prompt").forEach(el=>el.addEventListener("click",function(){const type=this.dataset.prompt;const text=type==="more"?"请提供更多详细的分析资料":"好的，帮我生成用户健康档案";msgs.push({r:"u",c:text,t:ts()});render();const sc=document.getElementById("cScroll");const tip=document.createElement("div");tip.className="typing";tip.innerHTML=`<div class="m-av">${IC.bot}</div><div class="bbl"><span></span><span></span><span></span></div>`;sc.appendChild(tip);sc.scrollTop=sc.scrollHeight;if(type==="profile"){awaitingNickname=true}setTimeout(()=>{msgs.push({r:"a",c:type==="more"?"好的，以下是更详细的分析资料：\n\n【详细指标分析】\n• 白细胞（WBC）：11.2×10⁹/L，偏高，常见于细菌感染、应激反应\n• 丙氨酸转氨酶（ALT）：52 U/L，轻度升高，建议2周后复查\n• 空腹血糖：5.8 mmol/L，处于正常高值区间\n\n【风险评估】\n根据以上指标，初步评估为「加费承保」可能性较大。\n\n建议补充：近3个月完整体检报告、既往用药记录、家族病史信息。":"请帮您的用户起一个昵称",t:ts()});render()},1500)}));
   const sc=document.getElementById("cScroll");if(sc)sc.scrollTop=sc.scrollHeight;
-  const fu=document.getElementById("fileUp");
-  if(fu)fu.addEventListener("change",e=>{
-    const f=e.target.files[0];if(!f)return;
-    const size=f.size<1024?f.size+"B":f.size<1048576?(f.size/1024).toFixed(1)+"KB":(f.size/1048576).toFixed(1)+"MB";
-    msgs.push({r:"file",fname:f.name,fsize:size,t:ts()});
-    e.target.value="";
-    render();
-    const sc2=document.getElementById("cScroll");
-    const tip=document.createElement("div");tip.className="typing";tip.innerHTML=`<div class="m-av">${IC.bot}</div><div class="bbl"><span></span><span></span><span></span></div>`;sc2.appendChild(tip);sc2.scrollTop=sc2.scrollHeight;
-    setTimeout(()=>{msgs.push({r:"a",c:"已收到您上传的文件「"+f.name+"」。\n\n我正在对文件内容进行智能分析，以下是初步结果：\n\n【文件识别】\n已成功读取文件内容，包含医学检查相关数据。\n\n【分析建议】\n1. 检验指标已提取，部分指标存在异常标记\n2. 建议结合临床症状综合判断\n3. 如需核保评估，请补充患者基本信息\n\n您可以继续描述相关问题，我会结合上传的文件为您做进一步分析。",t:ts()});render()},2000);
-  });
+  document.getElementById("uploadBtn")?.addEventListener("click",showUploadSheet);
 }
 function doSend(){if(!inp.trim())return;const sendText=inp.trim();inp="";if(awaitingNickname){awaitingNickname=false;msgs.push({r:"u",c:sendText,t:ts()});render();const sc=document.getElementById("cScroll");const tip=document.createElement("div");tip.className="typing";tip.innerHTML=`<div class="m-av">${IC.bot}</div><div class="bbl"><span></span><span></span><span></span></div>`;sc.appendChild(tip);sc.scrollTop=sc.scrollHeight;setTimeout(()=>{const now=new Date();const ts2=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0")+" "+String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");const newId=DATA.length+1;DATA.push({id:newId,name:"待完善",nickname:sendText,age:30,gender:"女",phone:"",createdAt:ts2,pre:"白细胞偏高、ALT轻度升高、空腹血糖正常高值",cond:"体检报告示：白细胞计数偏高（11.2×10⁹/L），常见于近期感染或应激反应；丙氨酸转氨酶轻度升高（52 U/L），建议2周后复查肝功能；空腹血糖5.8 mmol/L，处于正常高值区间；甲状腺功能各项指标正常。建议结合临床症状进一步评估。",imgs:{},recs:[]});msgs.push({r:"a",c:"好的，已为用户「"+sendText+"」创建健康档案：\n\n【档案编号】DA-"+String(newId).padStart(6,"0")+"\n【创建时间】"+ts2+"\n\n【健康摘要】\n• 血常规：白细胞偏高，需关注\n• 肝功能：ALT轻度升高\n• 血糖：正常范围\n• 甲状腺：各项指标正常\n\n档案已保存至「档案管理」，可随时查看和补充完善。",t:ts()});render()},1500);return}msgs.push({r:"u",c:sendText,t:ts()});render();const sc=document.getElementById("cScroll");const tip=document.createElement("div");tip.className="typing";tip.id="tipEl";tip.innerHTML=`<div class="m-av">${IC.bot}</div><div class="bbl"><span></span><span></span><span></span></div>`;sc.appendChild(tip);sc.scrollTop=sc.scrollHeight;const last=msgs[msgs.length-1].c;setTimeout(()=>{msgs.push({r:"a",c:aiR(last),t:ts()});render()},1500)}
 
@@ -1249,6 +1239,60 @@ function showPurchaseModal(videoId){
     alert("支付成功，正在播放："+v.title);
   });
   overlay.addEventListener("click",function(e){if(e.target===overlay)close()});
+}
+
+function handleFileUpload(f){
+  if(!f)return;
+  var size=f.size<1024?f.size+"B":f.size<1048576?(f.size/1024).toFixed(1)+"KB":(f.size/1048576).toFixed(1)+"MB";
+  msgs.push({r:"file",fname:f.name,fsize:size,t:ts()});
+  render();
+  var sc2=document.getElementById("cScroll");
+  var tip=document.createElement("div");tip.className="typing";tip.innerHTML='<div class="m-av">'+IC.bot+'</div><div class="bbl"><span></span><span></span><span></span></div>';sc2.appendChild(tip);sc2.scrollTop=sc2.scrollHeight;
+  setTimeout(function(){msgs.push({r:"a",c:"已收到您上传的文件「"+f.name+"」。\n\n我正在对文件内容进行智能分析，以下是初步结果：\n\n【文件识别】\n已成功读取文件内容，包含医学检查相关数据。\n\n【分析建议】\n1. 检验指标已提取，部分指标存在异常标记\n2. 建议结合临床症状综合判断\n3. 如需核保评估，请补充患者基本信息\n\n您可以继续描述相关问题，我会结合上传的文件为您做进一步分析。",t:ts()});render()},2000);
+}
+
+function showUploadSheet(){
+  var phone=document.querySelector(".phone");
+  var existing=document.getElementById("uploadSheet");
+  if(existing)existing.remove();
+  var overlay=document.createElement("div");
+  overlay.id="uploadSheet";
+  overlay.style.cssText="position:absolute;inset:0;background:rgba(0,0,0,.4);z-index:100;display:flex;align-items:flex-end;justify-content:center;border-radius:44px;overflow:hidden";
+  var albumIco='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5B8FF9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
+  var cameraIco='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#52C41A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>';
+  var fileIco='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FA8C16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>';
+  var itemStyle="display:flex;align-items:center;gap:14px;padding:16px 20px;cursor:pointer;transition:background .15s;border-radius:12px";
+  var labelStyle="font-size:15px;font-weight:500;color:#1a1a1a";
+  var icoBoxStyle="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0";
+  overlay.innerHTML='<div style="width:100%;background:#fff;border-radius:20px 20px 0 0;padding:8px 12px 32px;animation:slideUp .3s ease">'
+    +'<div style="text-align:center;padding:12px 0 8px;font-size:14px;font-weight:600;color:var(--text-primary)">选择上传方式</div>'
+    +'<div id="usAlbum" style="'+itemStyle+'"><div style="'+icoBoxStyle+';background:#E8F0FE">'+albumIco+'</div><span style="'+labelStyle+'">相册</span></div>'
+    +'<div id="usCamera" style="'+itemStyle+'"><div style="'+icoBoxStyle+';background:rgba(82,196,26,.1)">'+cameraIco+'</div><span style="'+labelStyle+'">拍照</span></div>'
+    +'<div id="usFile" style="'+itemStyle+'"><div style="'+icoBoxStyle+';background:rgba(250,140,22,.1)">'+fileIco+'</div><span style="'+labelStyle+'">文件</span></div>'
+    +'<div id="usCancel" style="text-align:center;padding:14px 0 0;font-size:14px;color:var(--text-tertiary);cursor:pointer;margin-top:4px">取消</div>'
+    +'</div>';
+  phone.appendChild(overlay);
+  var close=function(){overlay.remove()};
+  overlay.querySelector("#usCancel").addEventListener("click",close);
+  overlay.addEventListener("click",function(e){if(e.target===overlay)close()});
+  overlay.querySelector("#usAlbum").addEventListener("click",function(){
+    close();
+    var fi=document.createElement("input");fi.type="file";fi.accept="image/*";
+    fi.addEventListener("change",function(e){handleFileUpload(e.target.files[0])});
+    fi.click();
+  });
+  overlay.querySelector("#usCamera").addEventListener("click",function(){
+    close();
+    var fi=document.createElement("input");fi.type="file";fi.accept="image/*";fi.setAttribute("capture","environment");
+    fi.addEventListener("change",function(e){handleFileUpload(e.target.files[0])});
+    fi.click();
+  });
+  overlay.querySelector("#usFile").addEventListener("click",function(){
+    close();
+    var fi=document.createElement("input");fi.type="file";fi.accept=".pdf";
+    fi.addEventListener("change",function(e){handleFileUpload(e.target.files[0])});
+    fi.click();
+  });
 }
 
 // -- Profile Edit --
