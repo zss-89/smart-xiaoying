@@ -718,36 +718,26 @@ body{font-family:"AlibabaPuHuiTi","PingFang SC","Hiragino Sans GB","Microsoft Ya
 .slide-up{animation:slideUp .3s ease}
 
 /* Login Page */
-.login-page{display:flex;flex-direction:column;height:100%;background:var(--white)}
-.login-top{background:var(--green-grad);padding:0 16px 0}
-.login-top .brand{font-size:22px;font-weight:700;color:#fff;letter-spacing:1px;padding:14px 0 2px}
-.login-top .brand-sub{font-size:12px;color:rgba(255,255,255,.7);padding-bottom:12px}
-.login-card{margin:-6px 16px 0;background:var(--white);border-radius:20px;box-shadow:0 4px 24px rgba(0,0,0,.08);padding:0 20px 24px;display:flex;flex-direction:column;align-items:center;position:relative;z-index:1}
-.login-avatar{width:80px;height:80px;border-radius:50%;overflow:hidden;margin-top:-36px;border:4px solid #fff;box-shadow:0 4px 16px rgba(0,0,0,.1);background:#E8F0FE}
+.login-page{display:flex;flex-direction:column;height:100%;background:linear-gradient(180deg,#5B8FF9 0%,#7EABFF 100%)}
+.login-top{padding:0 16px}
+.login-top .brand{font-size:24px;font-weight:700;color:#fff;letter-spacing:1.5px;padding:16px 0 4px}
+.login-top .brand-sub{font-size:12px;color:rgba(255,255,255,.75);padding-bottom:16px;letter-spacing:.3px}
+.login-card{margin:0 20px;background:var(--white);border-radius:20px;box-shadow:0 8px 32px rgba(0,0,0,.1);padding:0 24px 28px;display:flex;flex-direction:column;align-items:center;position:relative;z-index:1}
+.login-avatar{width:88px;height:88px;border-radius:50%;overflow:hidden;margin-top:-40px;border:4px solid #fff;box-shadow:0 4px 20px rgba(0,0,0,.12);background:#E8F0FE}
 .login-avatar img{width:100%;height:100%;object-fit:cover}
-.login-welcome{font-size:20px;font-weight:700;color:var(--text-primary);margin-top:14px;text-align:center}
-.login-desc{font-size:13px;color:var(--text-tertiary);text-align:center;margin-top:6px;line-height:1.6;padding:0 8px}
-.login-steps{display:flex;align-items:center;justify-content:center;gap:0;margin:24px 0 20px;width:100%}
-.login-step{display:flex;align-items:center;gap:6px}
-.login-step .ls-dot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
-.login-step .ls-dot.done{background:#52C41A}
-.login-step .ls-dot.current{background:var(--green)}
-.login-step .ls-label{font-size:12px;color:var(--text-secondary)}
-.login-step-line{width:48px;height:2px;background:var(--border);margin:0 8px}
-.login-step-line.done{background:#52C41A}
-.login-main-btn{width:100%;padding:14px;background:var(--green-grad);color:#fff;border:none;border-radius:24px;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(91,143,249,.25);display:flex;align-items:center;justify-content:center;gap:8px;font-family:inherit;margin-bottom:12px}
-.login-main-btn:active{transform:scale(.97)}
-.login-main-btn svg{width:20px;height:20px}
-.login-note{font-size:11px;color:var(--text-tertiary);text-align:center;margin-bottom:16px;line-height:1.5}
-.login-skip{font-size:12px;color:var(--text-tertiary);cursor:pointer;padding:8px 16px;border-radius:8px;background:var(--bg);border:none;transition:all .15s;font-family:inherit;margin-bottom:16px}
-.login-skip:active{background:#e8e8e8}
-.login-agr{display:flex;align-items:flex-start;gap:8px;cursor:pointer;padding:0 4px}
+.login-welcome{font-size:20px;font-weight:700;color:#1a1a1a;margin-top:16px;text-align:center;letter-spacing:.3px}
+.login-desc{font-size:13px;color:#999;text-align:center;margin-top:8px;line-height:1.7;padding:0 4px}
+.login-main-btn{width:100%;padding:14px;background:var(--green-grad);color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:600;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(91,143,249,.3);display:flex;align-items:center;justify-content:center;gap:8px;font-family:inherit;margin-top:28px;margin-bottom:14px}
+.login-main-btn:active{transform:scale(.97);box-shadow:0 2px 8px rgba(91,143,249,.2)}
+.login-main-btn svg{width:20px;height:20px;flex-shrink:0}
+.login-note{font-size:11px;color:#bbb;text-align:center;margin-bottom:18px;line-height:1.5}
+.login-agr{display:flex;align-items:flex-start;gap:8px;cursor:pointer;padding:0}
 .login-agr input[type="checkbox"]{display:none}
-.login-agr .agr-box{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;margin-top:1px}
+.login-agr .agr-box{width:16px;height:16px;border-radius:4px;border:1.5px solid #d9d9d9;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;margin-top:1px}
 .login-agr input:checked~.agr-box{background:var(--green);border-color:var(--green)}
 .login-agr input:checked~.agr-box svg{color:#fff}
 .login-agr .agr-box svg{width:10px;height:10px;color:transparent}
-.login-agr .agr-txt{font-size:11px;color:var(--text-tertiary);line-height:1.6}
+.login-agr .agr-txt{font-size:11px;color:#bbb;line-height:1.6}
 .login-agr .agr-txt a{color:var(--green);text-decoration:none;font-weight:500}
 </style>
 </head>
@@ -1150,7 +1140,6 @@ function bUW(){
 // -- Login --
 function rLogin(){
   var wxIco='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 0 1 .213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 0 0 .167-.054l1.903-1.114a.864.864 0 0 1 .717-.098 10.16 10.16 0 0 0 2.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348z"/></svg>';
-  var shieldIco='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="14"/><line x1="9" y1="11" x2="15" y2="11"/></svg>';
   var checkSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
   return'<div class="page active" style="display:flex"><div class="login-page">'
     +'<div class="login-top"><div class="brand">inscare</div><div class="brand-sub">智能小英 · AI 医疗核保助手</div></div>'
@@ -1158,14 +1147,8 @@ function rLogin(){
     +'<div class="login-avatar"><img src="images/hero.png" alt=""/></div>'
     +'<div class="login-welcome">欢迎使用智能小英</div>'
     +'<div class="login-desc">授权手机号后即可使用档案管理、智能核保等完整服务</div>'
-    +'<div class="login-steps">'
-    +'<div class="login-step"><div class="ls-dot done">'+checkSvg+'</div><span class="ls-label">微信已登录</span></div>'
-    +'<div class="login-step-line done"></div>'
-    +'<div class="login-step"><div class="ls-dot current">2</div><span class="ls-label">绑定手机</span></div>'
-    +'</div>'
-    +'<button class="login-main-btn" id="loginWxBtn">'+shieldIco+'授权微信手机号</button>'
+    +'<button class="login-main-btn" id="loginWxBtn">'+wxIco+'微信一键登录</button>'
     +'<div class="login-note">需授权手机号以完成注册，保障账户安全</div>'
-    +'<button class="login-skip" id="loginSkipBtn">开发环境：跳过登录</button>'
     +'<label class="login-agr" id="loginAgr"><input type="checkbox" id="loginAgrCheck"/><div class="agr-box">'+checkSvg+'</div><div class="agr-txt">登录即表示同意<a id="agrRegLink">《用户注册协议》</a>和<a id="agrPriLink">《用户隐私协议》</a></div></label>'
     +'</div></div></div>';
 }
@@ -1173,10 +1156,6 @@ function bLogin(){
   document.getElementById("loginWxBtn")?.addEventListener("click",function(){
     var agreed=document.getElementById("loginAgrCheck").checked;
     if(!agreed){alert("请先阅读并同意用户注册协议和用户隐私协议");return;}
-    isAuthorized=true;page="profile";render();
-    if(!isProfileSetup){setTimeout(function(){document.getElementById("profileSetupModal")?.classList.add("show")},300);}
-  });
-  document.getElementById("loginSkipBtn")?.addEventListener("click",function(){
     isAuthorized=true;page="profile";render();
     if(!isProfileSetup){setTimeout(function(){document.getElementById("profileSetupModal")?.classList.add("show")},300);}
   });
