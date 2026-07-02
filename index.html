@@ -482,59 +482,6 @@ body{font-family:"AlibabaPuHuiTi","PingFang SC","Hiragino Sans GB","Microsoft Ya
 .tool-item .ti-ico svg{width:22px;height:22px}
 .tool-item .ti-label{font-size:11px;color:var(--text-secondary);white-space:nowrap}
 
-/* ==================== Wallet Entry Card (Profile) ==================== */
-.wallet-entry{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:0;margin-bottom:12px;overflow:hidden;cursor:pointer;transition:all .2s}
-.wallet-entry:active{transform:scale(.98)}
-.wp-top{background:var(--green-grad);padding:16px 16px 14px;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden}
-.wp-top::after{content:"";position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.08)}
-.wp-ico{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.wp-ico svg{width:22px;height:22px;color:#fff}
-.wp-info{flex:1}
-.wp-label{font-size:12px;color:rgba(255,255,255,.8)}
-.wp-balance{font-size:22px;font-weight:700;color:#fff;margin-top:2px;letter-spacing:-.5px}
-.wp-arrow{color:rgba(255,255,255,.6);flex-shrink:0}
-.wp-arrow svg{width:18px;height:18px}
-.wp-bottom{padding:10px 16px;display:flex;justify-content:space-around}
-.wp-action{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--green);font-weight:500}
-.wp-action svg{width:15px;height:15px}
-
-/* ==================== Wallet Detail Page ==================== */
-.wallet-page{display:flex;flex-direction:column;height:100%}
-.wallet-hdr{background:var(--green-grad);padding:0 16px;flex-shrink:0;position:relative;overflow:hidden}
-.wallet-hdr::after{content:"";position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.06)}
-.wallet-hdr::before{content:"";position:absolute;bottom:-30px;left:-20px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.04)}
-.wh-nav{display:flex;align-items:center;gap:10px;padding:10px 0;position:relative;z-index:1}
-.wh-nav .bk{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
-.wh-nav .bk:hover{background:rgba(255,255,255,.3)}
-.wh-nav .bk svg{width:18px;height:18px}
-.wh-nav h2{font-size:16px;font-weight:600;color:#fff}
-.wh-balance{padding:10px 0 24px;text-align:center;position:relative;z-index:1}
-.wh-balance .wb-label{font-size:13px;color:rgba(255,255,255,.75)}
-.wh-balance .wb-amount{font-size:40px;font-weight:800;color:#fff;margin-top:6px;letter-spacing:-1px}
-.wh-balance .wb-amount .wb-unit{font-size:18px;font-weight:600;margin-left:2px}
-.wh-actions{display:flex;gap:12px;padding:0 0 20px;justify-content:center;position:relative;z-index:1}
-.wh-btn{padding:11px 0;border-radius:24px;font-size:14px;font-weight:600;border:none;cursor:pointer;transition:all .2s;flex:1;max-width:140px;text-align:center}
-.wh-btn:active{transform:scale(.96)}
-.wh-btn.recharge{background:#fff;color:var(--green);box-shadow:0 2px 8px rgba(0,0,0,.1)}
-.wh-btn.withdraw{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4)}
-.wallet-body{flex:1;overflow-y:auto;background:var(--bg);padding:16px}
-.wb-section-title{font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.wb-section-title svg{width:16px;height:16px;color:var(--green)}
-.wb-txn-list{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
-.wb-txn{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border)}
-.wb-txn:last-child{border-bottom:none}
-.wb-txn-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.wb-txn-ico.in{background:#E8F8E8}
-.wb-txn-ico.out{background:#FFF0F0}
-.wb-txn-ico svg{width:18px;height:18px}
-.wb-txn-info{flex:1;min-width:0}
-.wb-txn-note{font-size:13px;font-weight:500;color:var(--text-primary)}
-.wb-txn-time{font-size:11px;color:var(--text-tertiary);margin-top:2px}
-.wb-txn-amt{font-size:15px;font-weight:700;flex-shrink:0}
-.wb-txn-amt.in{color:#52C41A}
-.wb-txn-amt.out{color:#FF4D4F}
-.wallet-empty{text-align:center;padding:40px 20px;color:var(--text-tertiary);font-size:13px}
-
 /* ==================== Risk Query Page ==================== */
 .risk-hdr{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--green);color:#fff;flex-shrink:0}
 .risk-hdr .bk{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
@@ -847,12 +794,6 @@ let page="home",detId=null,detTab="info",vidCount=6,msgs=[{r:"a",c:"你好，我
 let isAuthorized=false,isProfileSetup=false;let detEdit=false;
 let selectedProduct="平安人生免健告版";
 let aiLoading=false,aiResult=null,aiPatient=null;let awaitingNickname=false;
-let walletBalance=3680.50,walletAction="",walletTxns=[
-  {type:"in",amt:2000,note:"充值",time:"2026-06-20 14:30"},
-  {type:"in",amt:1000,note:"充值",time:"2026-06-15 10:00"},
-  {type:"out",amt:500,note:"提现",time:"2026-06-12 16:45"},
-  {type:"in",amt:1500,note:"充值",time:"2026-06-08 11:20"}
-];
 let userPoints=28560,checkinStreak=3,checkinToday=false;
 let tasksDone={browse:false,chat:false,video:false};
 let currentChatId=1;
@@ -939,7 +880,6 @@ function render(){
   else if(page==="riskQuery"){tb.style.display="none";el.innerHTML=rRiskQuery();bRiskQuery();}
   else if(page==="aiInterpret"){tb.style.display="none";el.innerHTML=rAiInterpret();bAiInterpret();}
   else if(page==="about"){tb.style.display="none";el.innerHTML=rAbout();bAbout();}
-  else if(page==="wallet"){tb.style.display="none";el.innerHTML=rWallet();bWallet();}
   else if(page==="login"){tb.style.display="none";el.innerHTML=rLogin();bLogin();}
   else{tb.style.display="flex";uTabs();el.innerHTML=({"home":rHome,"chat":rChat,"archives":rArchives,"underwriting":rUW,"profile":rProfile})[page]();({"home":bHome,"chat":bChat,"archives":bArchives,"underwriting":bUW,"profile":bProfile})[page]();}
 }
@@ -1177,76 +1117,11 @@ function rProfile(){
     {ico:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1890FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',bg:"#E6F7FF",t:"客户管理",d:"管理客户信息",nav:""},
     {ico:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5B8FF9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',bg:"#F0E8FE",t:"关于英仕",d:"了解英仕健康",nav:"about"},
   ];
-  return`<div class="page active" style="display:flex"><div class="prof-top"><button class="prof-edit-btn" id="profEditBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>完善资料</button><div class="prof-user"><div class="p-av">${ME.av}</div><div><div class="p-name">${ME.name}</div><div class="p-phone">${IC.phone} ${ME.phone}</div><span class="p-role">${ME.company?ME.company:''}${ME.agentId?'<span style="margin-left:8px;padding:1px 8px;background:var(--green-light);color:var(--green);border-radius:6px;font-size:11px">编号 '+ME.agentId+'</span>':ME.role?'':' '}</span>${ME.role&&!ME.company?'<span class="p-role">'+ME.role+'</span>':''}</div></div><div class="prof-stats"><div class="ps"><div class="pn">${ac}</div><div class="pl">客户健康档案</div></div><div class="ps"><div class="pn">${uc}</div><div class="pl">核保用户数</div></div></div></div><div class="prof-menu"><div class="wallet-entry" id="walletEntry"><div class="wp-top"><div class="wp-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><div class="wp-info"><div class="wp-label">账户余额(元)</div><div class="wp-balance">${walletBalance.toFixed(2)}</div></div><div class="wp-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div></div><div class="wp-bottom"><div class="wp-action" id="wpRecharge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>充值</div><div class="wp-action" id="wpWithdraw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>提现</div></div></div>${items.map(i=>`<div class="m-item"${i.nav?' data-nav="'+i.nav+'"':''}><div class="m-ico" style="background:${i.bg}">${i.ico}</div><div class="m-txt"><div class="mt">${i.t}</div><div class="md">${i.d}</div></div><span class="chev-r">${IC.chevR}</span></div>`).join("")}<div class="toolbox-section"><div class="toolbox-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>常用工具箱</div><div class="toolbox-grid"><div class="tool-item" data-nav="riskQuery"><div class="ti-ico" style="background:linear-gradient(135deg,#FFF0F0,#FFE0E0)"><svg viewBox="0 0 24 24" fill="none" stroke="#FF4D4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><span class="ti-label">风控查询</span></div></div></div></div><div class="ver-info"><p>智能小英 v1.0.0</p><p style="margin-top:4px">AI驱动的医疗核保助手</p></div></div></div>`;
+  return`<div class="page active" style="display:flex"><div class="prof-top"><button class="prof-edit-btn" id="profEditBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>完善资料</button><div class="prof-user"><div class="p-av">${ME.av}</div><div><div class="p-name">${ME.name}</div><div class="p-phone">${IC.phone} ${ME.phone}</div><span class="p-role">${ME.company?ME.company:''}${ME.agentId?'<span style="margin-left:8px;padding:1px 8px;background:var(--green-light);color:var(--green);border-radius:6px;font-size:11px">编号 '+ME.agentId+'</span>':ME.role?'':' '}</span>${ME.role&&!ME.company?'<span class="p-role">'+ME.role+'</span>':''}</div></div><div class="prof-stats"><div class="ps"><div class="pn">${ac}</div><div class="pl">客户健康档案</div></div><div class="ps"><div class="pn">${uc}</div><div class="pl">核保用户数</div></div></div></div><div class="prof-menu">${items.map(i=>`<div class="m-item"${i.nav?' data-nav="'+i.nav+'"':''}><div class="m-ico" style="background:${i.bg}">${i.ico}</div><div class="m-txt"><div class="mt">${i.t}</div><div class="md">${i.d}</div></div><span class="chev-r">${IC.chevR}</span></div>`).join("")}<div class="toolbox-section"><div class="toolbox-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>常用工具箱</div><div class="toolbox-grid"><div class="tool-item" data-nav="riskQuery"><div class="ti-ico" style="background:linear-gradient(135deg,#FFF0F0,#FFE0E0)"><svg viewBox="0 0 24 24" fill="none" stroke="#FF4D4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><span class="ti-label">风控查询</span></div></div></div></div><div class="ver-info"><p>智能小英 v1.0.0</p><p style="margin-top:4px">AI驱动的医疗核保助手</p></div></div></div>`;
 }
 function bProfile(){
   document.querySelectorAll("[data-nav]").forEach(el=>el.addEventListener("click",()=>{page=el.dataset.nav;render()}));
   document.getElementById("profEditBtn")?.addEventListener("click",()=>{page="profileEdit";render()});
-  document.getElementById("walletEntry")?.addEventListener("click",()=>{page="wallet";render()});
-  document.getElementById("wpRecharge")?.addEventListener("click",(e)=>{e.stopPropagation();page="wallet";walletAction="recharge";render()});
-  document.getElementById("wpWithdraw")?.addEventListener("click",(e)=>{e.stopPropagation();page="wallet";walletAction="withdraw";render()});
-}
-
-// -- Wallet --
-function rWallet(){
-  const txnHtml=walletTxns.length?walletTxns.map(tx=>{
-    const isIn=tx.type==="in";
-    const icoSvg=isIn?'<svg viewBox="0 0 24 24" fill="none" stroke="#52C41A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 13 12 8 17 13"/><line x1="12" y1="8" x2="12" y2="20"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="#FF4D4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 11 12 16 17 11"/><line x1="12" y1="16" x2="12" y2="4"/></svg>';
-    return`<div class="wb-txn"><div class="wb-txn-ico ${tx.type}">${icoSvg}</div><div class="wb-txn-info"><div class="wb-txn-note">${eh(tx.note)}</div><div class="wb-txn-time">${tx.time}</div></div><div class="wb-txn-amt ${tx.type}">${isIn?'+':'-'}${tx.amt.toFixed(2)}</div></div>`;
-  }).join(""):'<div class="wallet-empty">暂无交易记录</div>';
-  return`<div class="page active" style="display:flex"><div class="wallet-page"><div class="wallet-hdr"><div class="wh-nav"><button class="bk" id="walletBack">${IC.chevL}</button><h2>我的钱包</h2></div><div class="wh-balance"><div class="wb-label">账户余额(元)</div><div class="wb-amount">${walletBalance.toFixed(2)}<span class="wb-unit">元</span></div></div><div class="wh-actions"><button class="wh-btn recharge" id="walletRecharge">充值</button><button class="wh-btn withdraw" id="walletWithdraw">提现</button></div></div><div class="wallet-body"><div class="wb-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>交易记录</div><div class="wb-txn-list">${txnHtml}</div></div></div></div>`;
-}
-function bWallet(){
-  document.getElementById("walletBack")?.addEventListener("click",()=>{page="profile";walletAction="";render()});
-  document.getElementById("walletRecharge")?.addEventListener("click",()=>{showWalletModal("recharge")});
-  document.getElementById("walletWithdraw")?.addEventListener("click",()=>{showWalletModal("withdraw")});
-  if(walletAction==="recharge"){setTimeout(()=>showWalletModal("recharge"),100);walletAction="";}
-  if(walletAction==="withdraw"){setTimeout(()=>showWalletModal("withdraw"),100);walletAction="";}
-}
-function showWalletModal(type){
-  const isIn=type==="recharge";
-  const title=isIn?"充值":"提现";
-  const overlay=document.createElement("div");
-  overlay.id="walletModal";
-  overlay.style.cssText="position:absolute;inset:0;background:rgba(0,0,0,.4);z-index:100;display:flex;align-items:flex-end;justify-content:center;border-radius:44px;overflow:hidden";
-  overlay.innerHTML=`<div style="width:100%;background:#fff;border-radius:20px 20px 0 0;padding:24px 20px 32px;animation:slideUp .3s ease">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-      <span style="font-size:16px;font-weight:700;color:var(--text-primary)">${title}</span>
-      <button id="wmClose" style="width:28px;height:28px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>
-    ${!isIn?`<div style="text-align:center;margin-bottom:16px;font-size:12px;color:var(--text-tertiary)">可提现余额：<span style="color:var(--green);font-weight:600">${walletBalance.toFixed(2)}</span> 元</div>`:""}
-    <div style="display:flex;align-items:baseline;justify-content:center;margin-bottom:20px;gap:2px">
-      <span style="font-size:20px;font-weight:700;color:var(--text-primary)">¥</span>
-      <input id="wmAmount" type="number" inputmode="decimal" placeholder="0.00" style="border:none;border-bottom:2px solid var(--green);font-size:36px;font-weight:800;text-align:center;width:160px;outline:none;color:var(--text-primary);background:transparent;padding:4px 0;font-family:inherit"/>
-    </div>
-    <div style="display:flex;gap:8px;margin-bottom:20px;justify-content:center">
-      ${isIn?[100,500,1000,2000].map(v=>`<button class="wm-preset" data-amt="${v}" style="padding:8px 16px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:13px;color:var(--text-primary);cursor:pointer;font-family:inherit;transition:all .2s">${v}元</button>`).join(""):[100,200,500].map(v=>`<button class="wm-preset" data-amt="${v}"${v>walletBalance?' disabled':''} style="padding:8px 16px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:13px;color:var(--text-primary);cursor:pointer;font-family:inherit;transition:all .2s${v>walletBalance?';opacity:.4;cursor:not-allowed':''}">${v}元</button>`).join("")}
-    </div>
-    <button id="wmConfirm" style="width:100%;padding:13px;border-radius:24px;font-size:15px;font-weight:600;border:none;background:var(--green-grad);color:#fff;cursor:pointer;box-shadow:0 4px 16px rgba(91,143,249,.25);font-family:inherit">${isIn?"确认充值":"确认提现"}</button>
-  </div>`;
-  const phone=document.querySelector(".phone");
-  phone.appendChild(overlay);
-  const close=()=>{overlay.remove()};
-  overlay.querySelector("#wmClose").addEventListener("click",close);
-  overlay.addEventListener("click",(e)=>{if(e.target===overlay)close()});
-  overlay.querySelectorAll(".wm-preset").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-      if(btn.disabled)return;
-      overlay.querySelector("#wmAmount").value=btn.dataset.amt;
-      overlay.querySelectorAll(".wm-preset").forEach(b=>{b.style.borderColor="var(--border)";b.style.background="var(--bg)";b.style.color="var(--text-primary)"});
-      btn.style.borderColor="var(--green)";btn.style.background="var(--green-light)";btn.style.color="var(--green-dark)";
-    });
-  });
-  overlay.querySelector("#wmConfirm").addEventListener("click",()=>{
-    const amt=parseFloat(overlay.querySelector("#wmAmount").value);
-    if(!amt||amt<=0){overlay.querySelector("#wmAmount").style.borderBottomColor="#FF4D4F";return;}
-    if(!isIn&&amt>walletBalance){overlay.querySelector("#wmAmount").style.borderBottomColor="#FF4D4F";return;}
-    const now=new Date();const tStr=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0")+" "+String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");
-    if(isIn){walletBalance+=amt;walletTxns.unshift({type:"in",amt:amt,note:"充值",time:tStr});}
-    else{walletBalance-=amt;walletTxns.unshift({type:"out",amt:amt,note:"提现",time:tStr});}
-    close();
-    page="wallet";render();
-  });
 }
 
 function showPrivacyModal(){
@@ -1295,10 +1170,6 @@ function showPurchaseModal(videoId){
   var close=function(){overlay.remove()};
   overlay.querySelector("#pmCancel").addEventListener("click",close);
   overlay.querySelector("#pmConfirm").addEventListener("click",function(){
-    if(walletBalance<1){alert("余额不足，请先充值");close();return;}
-    walletBalance-=1;
-    var now=new Date();var tStr=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0")+" "+String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");
-    walletTxns.unshift({type:"out",amt:1,note:"付费视频："+v.title,time:tStr});
     close();
     alert("支付成功，正在播放："+v.title);
   });
