@@ -1060,7 +1060,7 @@ function bDetail(){
       a.recs.forEach(function(r){msg+="  "+r.date+" | "+r.prod+" | "+r.con+"："+r.txt+"\n"});
     }
     msg+="\n请综合分析以上所有病史资料，给出最新的核保建议。";
-    page="chat";render();
+    detId=null;page="chat";render();
     msgs.push({r:"u",c:msg,t:ts()});
     render();
     var sc=document.getElementById("cScroll");
