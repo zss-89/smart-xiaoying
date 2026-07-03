@@ -1049,7 +1049,30 @@ function bDetail(){
   document.getElementById("editCancel")?.addEventListener("click",()=>{detEdit=false;render()});
   document.getElementById("editSave")?.addEventListener("click",()=>{const a=DATA.find(x=>x.id===detId);if(!a)return;document.querySelectorAll(".edit-inp").forEach(el=>{const k=el.dataset.k;const v=el.value.trim();if(k==="name"&&v)a.name=v;if(k==="age"&&v)a.age=parseInt(v)||a.age;if(k==="gender"&&v)a.gender=v;if(k==="phone")a.phone=v;});detEdit=false;render()});
   document.querySelectorAll(".img-item").forEach(it=>it.addEventListener("click",()=>{const m=document.getElementById("imgModal");document.getElementById("imgModalImg").src=it.dataset.s;m.classList.add("show")}));
-  document.getElementById("reBtn")?.addEventListener("click",()=>{const a=DATA.find(x=>x.id===detId);if(a)openRe(a)});
+  document.getElementById("reBtn")?.addEventListener("click",()=>{
+    const a=DATA.find(x=>x.id===detId);if(!a)return;
+    var msg="请根据以下客户的全部疾病材料进行重新核保评估：\n\n"
+      +"【客户信息】"+a.name+"，"+a.gender+"，"+a.age+"岁\n"
+      +"【初步诊断】"+a.pre+"\n"
+      +"【既往症/病史详情】"+a.cond+"\n";
+    if(a.recs.length>0){
+      msg+="【历史核保记录】\n";
+      a.recs.forEach(function(r){msg+="  "+r.date+" | "+r.prod+" | "+r.con+"："+r.txt+"\n"});
+    }
+    msg+="\n请综合分析以上所有病史资料，给出最新的核保建议。";
+    page="chat";render();
+    msgs.push({r:"u",c:msg,t:ts()});
+    render();
+    var sc=document.getElementById("cScroll");
+    if(sc)sc.scrollTop=sc.scrollHeight;
+    var tip=document.createElement("div");tip.className="typing";tip.id="tipEl";
+    tip.innerHTML='<div class="m-av">'+IC.bot+'</div><div class="bbl"><span></span><span></span><span></span></div>';
+    if(sc){sc.appendChild(tip);sc.scrollTop=sc.scrollHeight;}
+    setTimeout(function(){
+      msgs.push({r:"a",c:"好的，我已根据客户「"+a.name+"」的全部病史资料进行了重新核保分析。\n\n【综合核保评估】\n\n客户基本信息："+a.gender+"，"+a.age+"岁\n初步诊断："+a.pre+"\n\n【病史分析】\n"+a.cond+"\n\n【核保结论】\n综合评估该客户的健康状况和既往病史，建议如下：\n\n· 重疾险：除外相关疾病责任后承保\n· 医疗险：除外该疾病相关治疗费用\n· 定期寿险：标准体承保\n\n【建议】\n1. 建议定期复查相关指标\n2. 如指标持续稳定，可考虑申请去除除外责任\n3. 如有新的检查结果，请及时补充\n\n* 以上为AI辅助建议，最终核保结论请以人工核保审核为准。",t:ts()});
+      render();
+    },2000);
+  });
   document.getElementById("aiInterpBtn")?.addEventListener("click",()=>{const a=DATA.find(x=>x.id===detId);if(!a)return;aiPatient=a;aiLoading=true;aiResult=null;page="aiInterpret";render()});
   const imgUp=document.getElementById("imgUpload");
   if(imgUp)imgUp.addEventListener("change",e=>{
