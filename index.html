@@ -1084,7 +1084,44 @@ function bDetail(){
       },2000);
     },100);
   });
-  document.getElementById("aiInterpBtn")?.addEventListener("click",()=>{const a=DATA.find(x=>x.id===detId);if(!a)return;aiPatient=a;aiLoading=true;aiResult=null;page="aiInterpret";render()});
+  document.getElementById("aiInterpBtn")?.addEventListener("click",function(){
+    var a=DATA.find(function(x){return x.id===detId});
+    if(!a)return;
+    var imgCount=0;
+    if(a.imgs){for(var k in a.imgs){imgCount+=a.imgs[k].length}}
+    var recLines="";
+    if(a.recs.length>0){
+      recLines="【历史核保记录】\n";
+      for(var i=0;i<a.recs.length;i++){
+        var r=a.recs[i];
+        recLines+="  "+r.date+" | "+r.prod+" | "+r.con+"："+r.txt+"\n";
+      }
+    }
+    var msg="请根据以下客户的全部疾病材料进行AI智能解读：\n\n"
+      +"【客户信息】"+a.name+"，"+a.gender+"，"+a.age+"岁\n"
+      +"【初步诊断】"+a.pre+"\n"
+      +"【既往症/病史详情】"+a.cond+"\n"
+      +"【疾病图片资料】共"+imgCount+"张\n"
+      +recLines
+      +"\n请综合分析以上所有病史资料，给出详细的智能解读和健康管理建议。";
+    var aName=a.name,aGender=a.gender,aAge=a.age,aPre=a.pre,aCond=a.cond;
+    msgs.push({r:"u",c:msg,t:ts()});
+    detId=null;
+    page="chat";
+    render();
+    setTimeout(function(){
+      var sc=document.getElementById("cScroll");
+      if(sc)sc.scrollTop=sc.scrollHeight;
+      var tip=document.createElement("div");
+      tip.className="typing";
+      tip.innerHTML='<div class="m-av">'+IC.bot+'</div><div class="bbl"><span></span><span></span><span></span></div>';
+      if(sc){sc.appendChild(tip);sc.scrollTop=sc.scrollHeight;}
+      setTimeout(function(){
+        msgs.push({r:"a",c:"好的，我已对客户「"+aName+"」的全部疾病材料进行了AI智能解读。\n\n【客户概况】\n"+aGender+"，"+aAge+"岁\n\n【病史摘要】\n"+aPre+"\n\n【详细解读】\n"+aCond+"\n\n【风险评估】\n根据以上病史资料综合分析：\n1. 当前健康状况存在明确风险因素\n2. 需关注相关指标的动态变化\n3. 建议制定定期复查计划\n\n【健康管理建议】\n1. 每3-6个月复查关键指标\n2. 保持良好的生活习惯和饮食结构\n3. 如有不适症状及时就医\n4. 建议建立长期健康档案跟踪\n\n* 以上为AI辅助解读，仅供参考，具体诊疗方案请遵医嘱。",t:ts()});
+        render();
+      },2000);
+    },100);
+  });
   const imgUp=document.getElementById("imgUpload");
   if(imgUp)imgUp.addEventListener("change",e=>{
     const files=Array.from(e.target.files);if(!files.length)return;
