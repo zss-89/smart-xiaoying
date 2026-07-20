@@ -1145,7 +1145,6 @@ function rUW(){
 function bUW(){
   document.getElementById("uSI")?.addEventListener("input",e=>{uSearch=e.target.value;render()});
   document.querySelectorAll(".fbtn").forEach(b=>b.addEventListener("click",()=>{uFilter=b.dataset.f;render()}));
-  document.querySelectorAll(".a-card[data-uid]").forEach(c=>c.addEventListener("click",()=>{detId=+c.dataset.uid;detTab="info";render()}));
 }
 
 // -- Login --
