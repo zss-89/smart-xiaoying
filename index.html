@@ -757,22 +757,22 @@ body{font-family:"AlibabaPuHuiTi","PingFang SC","Hiragino Sans GB","Microsoft Ya
 <script>
 // ===== Data =====
 const DATA=[
-  {id:1,name:"张伟",nickname:"小张",age:45,gender:"男",phone:"138****1234",createdAt:"2026-06-10 14:30",pre:"高血压（2级）、2型糖尿病",cond:"患者于2019年确诊高血压2级，长期服用氨氯地平片5mg qd，血压控制在130/85mmHg左右。2021年确诊2型糖尿病，目前口服二甲双胍0.5g bid，空腹血糖维持在6.5-7.2mmol/L之间。无其他重大慢性疾病史，无手术史，无过敏史。",
+  {id:1,name:"张伟",nickname:"小张",age:45,gender:"男",phone:"138****1234",job:"企业管理",createdAt:"2026-06-10 14:30",pre:"高血压（2级）、2型糖尿病",cond:"患者于2019年确诊高血压2级，长期服用氨氯地平片5mg qd，血压控制在130/85mmHg左右。2021年确诊2型糖尿病，目前口服二甲双胍0.5g bid，空腹血糖维持在6.5-7.2mmol/L之间。无其他重大慢性疾病史，无手术史，无过敏史。",
     imgs:{"2026-06-10":["https://picsum.photos/seed/m1a/300/200","https://picsum.photos/seed/m1b/300/200"],"2026-06-08":["https://picsum.photos/seed/m1c/300/200"],"2026-06-05":["https://picsum.photos/seed/m1d/300/200","https://picsum.photos/seed/m1e/300/200","https://picsum.photos/seed/m1f/300/200"]},
     recs:[{id:101,date:"2026-06-10",con:"除外",prod:"某重疾险",txt:"因高血压2级及2型糖尿病，除外心脑血管相关疾病及糖尿病并发症。"},{id:102,date:"2026-05-20",con:"延期",prod:"某医疗险",txt:"近期血糖波动较大，建议稳定3个月后重新申请。"}]},
-  {id:2,name:"李娜",nickname:"娜娜",age:32,gender:"女",phone:"139****5678",createdAt:"2026-06-09 10:15",pre:"甲状腺结节（TI-RADS 3类）",cond:"患者2025年体检发现甲状腺结节，TI-RADS 3类，大小约0.8cm×0.5cm，边界清晰，无钙化。甲状腺功能检查正常（TSH 2.1mIU/L，FT3 4.8pmol/L，FT4 16.2pmol/L）。无甲状腺疾病家族史。建议定期随访。",
+  {id:2,name:"李娜",nickname:"娜娜",age:32,gender:"女",phone:"139****5678",job:"教师",createdAt:"2026-06-09 10:15",pre:"甲状腺结节（TI-RADS 3类）",cond:"患者2025年体检发现甲状腺结节，TI-RADS 3类，大小约0.8cm×0.5cm，边界清晰，无钙化。甲状腺功能检查正常（TSH 2.1mIU/L，FT3 4.8pmol/L，FT4 16.2pmol/L）。无甲状腺疾病家族史。建议定期随访。",
     imgs:{"2026-06-09":["https://picsum.photos/seed/m2a/300/200","https://picsum.photos/seed/m2b/300/200"]},
     recs:[{id:201,date:"2026-06-09",con:"标体",prod:"某重疾险",txt:"甲状腺结节TI-RADS 3类，甲功正常，标准体承保。"}]},
-  {id:3,name:"王强",nickname:"强哥",age:55,gender:"男",phone:"137****9012",createdAt:"2026-06-08 09:45",pre:"冠心病（支架术后）、高脂血症",cond:"患者2024年因急性心肌梗死行PCI术，于前降支植入药物洗脱支架1枚。术后规律服用阿司匹林、氯吡格雷、阿托伐他汀等药物。目前心功能NYHA I级，LVEF 55%。合并高脂血症，LDL-C 2.8mmol/L。戒烟中。",
+  {id:3,name:"王强",nickname:"强哥",age:55,gender:"男",phone:"137****9012",job:"自由职业",createdAt:"2026-06-08 09:45",pre:"冠心病（支架术后）、高脂血症",cond:"患者2024年因急性心肌梗死行PCI术，于前降支植入药物洗脱支架1枚。术后规律服用阿司匹林、氯吡格雷、阿托伐他汀等药物。目前心功能NYHA I级，LVEF 55%。合并高脂血症，LDL-C 2.8mmol/L。戒烟中。",
     imgs:{"2026-06-08":["https://picsum.photos/seed/m3a/300/200"],"2026-06-03":["https://picsum.photos/seed/m3b/300/200","https://picsum.photos/seed/m3c/300/200"]},
     recs:[{id:301,date:"2026-06-08",con:"拒保",prod:"某重疾险",txt:"冠心病支架术后不足2年，心功能虽为NYHA I级，但整体风险较高，暂不予承保。"},{id:302,date:"2026-06-08",con:"拒保",prod:"某定期寿险",txt:"冠心病支架术后，死亡风险显著增加，拒保。"}]},
-  {id:4,name:"赵敏",nickname:"敏敏",age:28,gender:"女",phone:"136****3456",createdAt:"2026-06-07 16:20",pre:"乳腺结节（BI-RADS 2类）",cond:"患者2025年体检发现双侧乳腺多发小结节，最大约0.6cm×0.4cm，BI-RADS 2类，考虑良性可能。无乳头溢液，无腋窝淋巴结肿大。无乳腺癌家族史。建议6个月后复查乳腺超声。",
+  {id:4,name:"赵敏",nickname:"敏敏",age:28,gender:"女",phone:"136****3456",job:"设计师",createdAt:"2026-06-07 16:20",pre:"乳腺结节（BI-RADS 2类）",cond:"患者2025年体检发现双侧乳腺多发小结节，最大约0.6cm×0.4cm，BI-RADS 2类，考虑良性可能。无乳头溢液，无腋窝淋巴结肿大。无乳腺癌家族史。建议6个月后复查乳腺超声。",
     imgs:{"2026-06-07":["https://picsum.photos/seed/m4a/300/200"]},
     recs:[{id:401,date:"2026-06-07",con:"标体",prod:"某重疾险",txt:"乳腺结节BI-RADS 2类，考虑良性，标准体承保。"}]},
-  {id:5,name:"陈建国",nickname:"老陈",age:50,gender:"男",phone:"135****7890",createdAt:"2026-06-05 11:30",pre:"乙肝大三阳、轻度脂肪肝",cond:"患者既往乙肝大三阳（HBsAg+、HBeAg+、HBcAb+），HBV-DNA 1.2×10^5 IU/mL，肝功能ALT 58U/L（轻度升高），AST 42U/L。腹部超声提示轻度脂肪肝，肝实质回声稍增强。目前未行抗病毒治疗。",
+  {id:5,name:"陈建国",nickname:"老陈",age:50,gender:"男",phone:"135****7890",job:"工程师",createdAt:"2026-06-05 11:30",pre:"乙肝大三阳、轻度脂肪肝",cond:"患者既往乙肝大三阳（HBsAg+、HBeAg+、HBcAb+），HBV-DNA 1.2×10^5 IU/mL，肝功能ALT 58U/L（轻度升高），AST 42U/L。腹部超声提示轻度脂肪肝，肝实质回声稍增强。目前未行抗病毒治疗。",
     imgs:{"2026-06-05":["https://picsum.photos/seed/m5a/300/200","https://picsum.photos/seed/m5b/300/200"],"2026-06-01":["https://picsum.photos/seed/m5c/300/200"]},
     recs:[{id:501,date:"2026-06-05",con:"除外",prod:"某医疗险",txt:"乙肝大三阳且肝功能异常，除外肝脏相关疾病（含肝炎、肝硬化、肝癌）。"}]},
-  {id:6,name:"孙丽",nickname:"丽姐",age:38,gender:"女",phone:"133****2345",createdAt:"2026-06-03 08:50",pre:"子宫肌瘤",cond:"患者2025年超声检查发现子宫肌瘤，大小约2.5cm×2.0cm，位于肌壁间，月经量稍多但周期正常。血红蛋白118g/L，无贫血。无其他妇科疾病。建议定期复查超声。",
+  {id:6,name:"孙丽",nickname:"丽姐",age:38,gender:"女",phone:"133****2345",job:"会计",createdAt:"2026-06-03 08:50",pre:"子宫肌瘤",cond:"患者2025年超声检查发现子宫肌瘤，大小约2.5cm×2.0cm，位于肌壁间，月经量稍多但周期正常。血红蛋白118g/L，无贫血。无其他妇科疾病。建议定期复查超声。",
     imgs:{"2026-06-03":["https://picsum.photos/seed/m6a/300/200"]},
     recs:[{id:601,date:"2026-06-03",con:"标体",prod:"某重疾险",txt:"子宫肌瘤<5cm，无贫血，标准体承保。"}]}
 ];
@@ -1016,7 +1016,7 @@ function rDetail(){
   const th=tabs.map(([k,l])=>`<button class="${detTab===k?"on":""}" data-t="${k}">${l}</button>`).join("");
   let body="";
   if(detTab==="info"){
-    const its=[["姓名",a.name],["昵称",a.nickname||"-"],["年龄",a.age+"岁"],["性别",a.gender],["电话",a.phone||"-"],["建档时间",a.createdAt],["档案编号","DA-"+String(a.id).padStart(6,"0")]];
+    const its=[["姓名",a.name],["昵称",a.nickname||"-"],["年龄",a.age+"岁"],["性别",a.gender],["职业",a.job||"-"],["电话",a.phone||"-"],["建档时间",a.createdAt],["档案编号","DA-"+String(a.id).padStart(6,"0")]];
     const hs=getHealthStatus(a);
     const gaugeR=45,gaugeCx=55,gaugeCy=55,gaugeCirc=Math.PI*gaugeR;
     const gaugeOffset=gaugeCirc*(1-hs.score/100);
@@ -1152,6 +1152,7 @@ function showEditModal(){
     +'<button id="emMale" style="padding:6px 20px;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit;transition:all .2s;'+(a.gender==='男'?'background:#5B8FF9;color:#fff;border:1px solid #5B8FF9':'background:#fff;color:#333;border:1px solid #d9d9d9')+'">男</button>'
     +'<button id="emFemale" style="padding:6px 20px;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit;transition:all .2s;'+(a.gender==='女'?'background:#5B8FF9;color:#fff;border:1px solid #5B8FF9':'background:#fff;color:#333;border:1px solid #d9d9d9')+'">女</button>'
     +'</div></div>'
+    +'<div style="'+rowStyle+'"><span style="'+labelStyle+'">职业</span><input id="emJob" style="'+inpStyle+'" value="'+(a.job||'')+'" placeholder="请输入职业"/></div>'
     +'<div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0"><span style="'+labelStyle+'">电话</span><input id="emPhone" style="'+inpStyle+'" value="'+(a.phone||'')+'" placeholder="请输入电话"/></div>'
     +'<div style="display:flex;gap:12px;margin-top:20px">'
     +'<button id="emCancel" style="flex:1;padding:12px;border-radius:12px;font-size:14px;font-weight:500;border:1px solid #e8e8e8;background:#f5f5f5;color:#666;cursor:pointer;font-family:inherit">取消</button>'
@@ -1186,6 +1187,7 @@ function showEditModal(){
     if(nickVal)a.nickname=nickVal;
     if(ageVal)a.age=parseInt(ageVal)||a.age;
     a.gender=selGender;
+    a.job=overlay.querySelector("#emJob").value.trim();
     a.phone=phoneVal;
     close();
     render();
