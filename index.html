@@ -888,7 +888,7 @@ function uTabs(){document.querySelectorAll(".tab-bar button").forEach(b=>{b.clas
 // -- Home --
 function rHome(){
   const vids=VIDEOS.slice(0,vidCount);
-  const vidCards=vids.map(v=>`<div class="video-card" data-vid="${v.id}"><div class="video-thumb"><img src="${v.img}" alt="" loading="lazy"/><span class="video-badge${v.free?' free':''}">${v.free?'免费':'付费'}</span><div class="video-play"><div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div></div><div class="video-info"><div class="vt">${v.title}</div><div class="vd"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>${v.views} · ${v.date}</div></div></div>`).join("");
+  const vidCards=vids.map(v=>`<div class="video-card" data-vid="${v.id}"><div class="video-thumb"><img src="${v.img}" alt="" loading="lazy"/><!-- <span class="video-badge${v.free?' free':''}">${v.free?'免费':'付费'}</span> --><div class="video-play"><div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div></div><div class="video-info"><div class="vt">${v.title}</div><div class="vd"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>${v.views} · ${v.date}</div></div></div>`).join("");
   const moreBtn=vidCount<VIDEOS.length?`<button class="load-more-btn" id="loadMoreVid">点击加载更多</button>`:`<div style="text-align:center;padding:16px 0 8px;font-size:11px;color:#ccc">— 已经到底了 —</div>`;
 
   return`<div class="page active" style="display:flex">
@@ -950,7 +950,7 @@ function bHome(){
   document.getElementById("heroChatBtn")?.addEventListener("click",()=>{page="chat";render()});
   document.getElementById("prodBuyBtn")?.addEventListener("click",()=>{page="chat";msgs.push({r:"u",c:"我想了解一下平安人生免健告版本的产品详情",t:ts()});inp="";render();const sc=document.getElementById("cScroll");const tip=document.createElement("div");tip.className="typing";tip.innerHTML=`<div class="m-av">${IC.bot}</div><div class="bbl"><span></span><span></span><span></span></div>`;sc.appendChild(tip);sc.scrollTop=sc.scrollHeight;setTimeout(()=>{msgs.push({r:"a",c:"好的，为您介绍「平安人生 · 免健告版本」：\n\n【产品亮点】\n1. 免健康告知：无需填写健康告知，既往病史不影响投保\n2. 价格亲民：年缴低至198元起，覆盖重疾、医疗、意外多重保障\n3. 增值服务：赠送在线问诊、绿色通道就医、专属健康管理等VIP权益\n\n【保障范围】\n· 重大疾病保障：100种重疾，确诊即赔\n· 医疗保障：住院费用报销\n· 意外保障：意外伤害/身故保障\n\n如您有具体的健康状况需要评估，我可以为您做进一步的核保分析。",t:ts()});render()},2000)});
   document.getElementById("loadMoreVid")?.addEventListener("click",()=>{vidCount=Math.min(vidCount+6,VIDEOS.length);render()});
-  document.querySelectorAll(".video-card").forEach(c=>c.addEventListener("click",()=>{const v=VIDEOS.find(x=>x.id===+c.dataset.vid);if(!v)return;if(v.free){alert("播放："+v.title)}else{showPurchaseModal(v.id)}}));
+  document.querySelectorAll(".video-card").forEach(c=>c.addEventListener("click",()=>{const v=VIDEOS.find(x=>x.id===+c.dataset.vid);if(!v)return;/* if(v.free) */alert("播放："+v.title)/* else{showPurchaseModal(v.id)} */}));
 }
 
 // -- Chat --
